@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trouve ta Voie — Formations & Partenaires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #06060f; --bg-card: #0c0c1d; --bg-card-hover: #111128;
+  --purple-primary: #7c3aed; --purple-light: #a78bfa; --purple-glow: #8b5cf6;
+  --blue-accent: #3b82f6; --cyan-accent: #06b6d4;
+  --text-primary: #f1f0ff; --text-secondary: #a5a3c7; --text-muted: #6b6991;
+  --gradient-hero: linear-gradient(135deg, #7c3aed 0%, #3b82f6 50%, #06b6d4 100%);
+  --venn-love: #f472b6; --venn-talent: #a78bfa; --venn-money: #60a5fa;
+  --border-subtle: rgba(124, 58, 237, 0.08); --border-light: rgba(124, 58, 237, 0.15);
+  --green-accent: #34d399;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg-deep); color: var(--text-primary); font-family: 'Outfit', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+.grain { position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.022; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; background-size: 128px; }
+.highlight { background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* Ambient */
+.ambient-1 { position: fixed; top: -20%; left: -15%; width: 50%; height: 60%; background: radial-gradient(ellipse, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+.ambient-2 { position: fixed; bottom: -20%; right: -10%; width: 45%; height: 55%; background: radial-gradient(ellipse, rgba(59,130,246,0.06) 0%, transparent 70%); pointer-events: none; }
+
+/* Nav */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(6,6,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); }
+.logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.logo span { font-weight: 400; -webkit-text-fill-color: var(--cyan-accent); font-style: italic; margin: 0 0.08em; }
+.nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--text-secondary); font-size: 0.9rem; transition: color 0.25s; }
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta { padding: 0.5rem 1.25rem; border: 1px solid rgba(124,58,237,0.4); border-radius: 50px; font-weight: 500; transition: all 0.3s; }
+.nav-cta:hover { background: rgba(124,58,237,0.15); border-color: var(--purple-primary); }
+
+/* Reveal */
+.reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; } .reveal-d2 { transition-delay: 0.2s; } .reveal-d3 { transition-delay: 0.3s; } .reveal-d4 { transition-delay: 0.4s; }
+
+/* Sections */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+/* Hero formations */
+.formations-hero { padding: 8rem 0 5rem; text-align: center; position: relative; z-index: 2; }
+.formations-hero .badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; border-radius: 50px; background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); font-size: 0.8rem; font-weight: 500; color: var(--green-accent); letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 1.5rem; }
+.formations-hero h1 { font-family: 'Sora', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; margin-bottom: 1rem; }
+.formations-hero p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+/* Categories */
+.categories-section { padding: 4rem 0 5rem; }
+.categories-section .section-title { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.categories-section .section-sub { text-align: center; color: var(--text-secondary); margin-bottom: 3rem; font-size: 0.95rem; }
+
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.cat-card { padding: 2rem; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-subtle); transition: all 0.4s; position: relative; overflow: hidden; }
+.cat-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.cat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--gradient-hero); opacity: 0; transition: opacity 0.3s; }
+.cat-card:hover::after { opacity: 1; }
+.cat-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem; }
+.cat-card:nth-child(1) .cat-icon { background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.2); }
+.cat-card:nth-child(2) .cat-icon { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); }
+.cat-card:nth-child(3) .cat-icon { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); }
+.cat-card:nth-child(4) .cat-icon { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); }
+.cat-card:nth-child(5) .cat-icon { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); }
+.cat-card:nth-child(6) .cat-icon { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2); }
+.cat-title { font-family: 'Sora', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+.cat-desc { font-size: 0.88rem; line-height: 1.65; color: var(--text-secondary); margin-bottom: 1rem; }
+.cat-tag { display: inline-block; padding: 0.3rem 0.75rem; border-radius: 50px; font-size: 0.72rem; font-weight: 500; background: rgba(124,58,237,0.08); border: 1px solid var(--border-subtle); color: var(--purple-light); }
+
+/* Featured formations */
+.featured-section { padding: 4rem 0 5rem; border-top: 1px solid var(--border-subtle); }
+.featured-section .section-title { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 0.75rem; }
+.featured-section .section-sub { text-align: center; color: var(--text-secondary); margin-bottom: 3rem; font-size: 0.95rem; }
+
+.formation-list { display: flex; flex-direction: column; gap: 1.25rem; max-width: 800px; margin: 0 auto; }
+.formation-card { display: flex; gap: 1.5rem; padding: 1.75rem; border-radius: 18px; background: var(--bg-card); border: 1px solid var(--border-subtle); transition: all 0.35s; align-items: center; }
+.formation-card:hover { border-color: var(--border-light); transform: translateX(5px); }
+.formation-logo { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; background: rgba(124,58,237,0.08); border: 1px solid var(--border-subtle); }
+.formation-info { flex: 1; }
+.formation-name { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; }
+.formation-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.6rem; }
+.formation-meta { display: flex; gap: 1rem; flex-wrap: wrap; }
+.formation-meta span { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.3rem; }
+.formation-price { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--green-accent); white-space: nowrap; flex-shrink: 0; }
+.formation-badge-free { padding: 0.25rem 0.65rem; border-radius: 50px; font-size: 0.72rem; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: var(--green-accent); font-weight: 600; }
+
+/* CTA partenaire */
+.partner-cta { padding: 4rem 0 5rem; border-top: 1px solid var(--border-subtle); }
+.partner-box { text-align: center; max-width: 650px; margin: 0 auto; padding: 3.5rem 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(6,182,212,0.04) 100%); border: 1px solid var(--border-light); }
+.partner-box h2 { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.75rem; }
+.partner-box p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.75rem; }
+.btn-primary { display: inline-flex; align-items: center; gap: 0.6rem; padding: 1rem 2rem; border-radius: 60px; background: var(--gradient-hero); color: white; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.35s; box-shadow: 0 0 30px rgba(124,58,237,0.25); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(124,58,237,0.4); }
+
+/* Footer */
+footer { padding: 3rem 0 2rem; border-top: 1px solid var(--border-subtle); }
+.footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+.footer-logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.2rem; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.footer-logo span { -webkit-text-fill-color: var(--cyan-accent); font-style: italic; font-weight: 400; margin: 0 0.08em; }
+.footer-links { display: flex; gap: 2rem; list-style: none; }
+.footer-links a { color: var(--text-muted); font-size: 0.85rem; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text-secondary); }
+.footer-copy { font-size: 0.78rem; color: var(--text-muted); width: 100%; text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); }
+
+/* Filters */
+.filter-btn {
+  padding: 0.5rem 1.1rem; border-radius: 50px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem; font-weight: 500; cursor: pointer;
+  transition: all 0.25s;
+}
+.filter-btn:hover { border-color: var(--border-light); background: var(--bg-card-hover); }
+.filter-btn.active {
+  background: rgba(124,58,237,0.12); border-color: var(--purple-primary);
+  color: var(--purple-light); font-weight: 600;
+}
+
+.formation-card.hidden { display: none; }
+.formation-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; min-width: 100px; }
+.formation-link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.45rem 1rem; border-radius: 50px;
+  background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2);
+  color: var(--purple-light); font-size: 0.8rem; font-weight: 600;
+  text-decoration: none; transition: all 0.25s; white-space: nowrap;
+}
+.formation-link:hover {
+  background: rgba(124,58,237,0.2); border-color: var(--purple-primary);
+  transform: translateX(2px);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .formation-card { flex-direction: column; align-items: flex-start; }
+  .container { padding: 0 1.25rem; }
+  .formations-hero { padding: 6.5rem 0 3.5rem; }
+  .partner-box { padding: 2.5rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="ambient-1"></div>
+<div class="ambient-2"></div>
+
+<!-- Nav -->
+<nav>
+  <a href="index.html" class="logo">Trouve<span>ta</span>Voie</a>
+  <ul class="nav-links">
+    <li><a href="index.html#how">Comment &ccedil;a marche</a></li>
+    <li><a href="questionnaire.html">Faire le test</a></li>
+    <li><a href="a-propos.html">A propos</a></li>
+    <li><a href="questionnaire.html" class="nav-cta">Commencer</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="formations-hero">
+  <div class="container">
+    <div class="reveal">
+      <span class="badge">&#127891; &Eacute;tape 5</span>
+      <h1>Passe &agrave; l'action avec les<br><span class="highlight">bonnes formations</span></h1>
+      <p>Tu as trouv&eacute; ta voie. Maintenant, il faut la construire. On a s&eacute;lectionn&eacute; les meilleures ressources pour chaque domaine &mdash; formations, mentorats, outils &mdash; pour t'aider &agrave; concr&eacute;tiser.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="categories-section">
+  <div class="container">
+    <h2 class="section-title reveal">Explore par <span class="highlight">domaine</span></h2>
+    <p class="section-sub reveal">Chaque cat&eacute;gorie regroupe des formations et ressources tri&eacute;es sur le volet.</p>
+    <div class="cat-grid">
+      <div class="cat-card reveal reveal-d1">
+        <div class="cat-icon">&#128187;</div>
+        <h3 class="cat-title">Tech & Digital</h3>
+        <p class="cat-desc">D&eacute;veloppement web, design UX/UI, no-code, data, IA. Les comp&eacute;tences les plus demand&eacute;es du march&eacute;.</p>
+        <span class="cat-tag">12 formations</span>
+      </div>
+      <div class="cat-card reveal reveal-d2">
+        <div class="cat-icon">&#127912;</div>
+        <h3 class="cat-title">Cr&eacute;ation & Design</h3>
+        <p class="cat-desc">Graphisme, vid&eacute;o, photo, illustration, direction artistique. Transforme ta cr&eacute;ativit&eacute; en carri&egrave;re.</p>
+        <span class="cat-tag">9 formations</span>
+      </div>
+      <div class="cat-card reveal reveal-d3">
+        <div class="cat-icon">&#128640;</div>
+        <h3 class="cat-title">Business & Entrepreneuriat</h3>
+        <p class="cat-desc">Lancer son business, freelance, e-commerce, marketing digital. De l'id&eacute;e au premier euro.</p>
+        <span class="cat-tag">15 formations</span>
+      </div>
+      <div class="cat-card reveal reveal-d1">
+        <div class="cat-icon">&#127908;</div>
+        <h3 class="cat-title">Contenu & M&eacute;dias</h3>
+        <p class="cat-desc">Cr&eacute;ation de contenu, YouTube, TikTok, podcast, copywriting. Construis ton audience.</p>
+        <span class="cat-tag">8 formations</span>
+      </div>
+      <div class="cat-card reveal reveal-d2">
+        <div class="cat-icon">&#128154;</div>
+        <h3 class="cat-title">Impact & Social</h3>
+        <p class="cat-desc">D&eacute;veloppement durable, ESS, ONG, sant&eacute;, &eacute;ducation. Des carri&egrave;res qui ont du sens.</p>
+        <span class="cat-tag">6 formations</span>
+      </div>
+      <div class="cat-card reveal reveal-d3">
+        <div class="cat-icon">&#128170;</div>
+        <h3 class="cat-title">D&eacute;veloppement Personnel</h3>
+        <p class="cat-desc">Coaching, productivit&eacute;, confiance en soi, prise de parole. Les soft skills qui font la diff&eacute;rence.</p>
+        <span class="cat-tag">7 formations</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured formations -->
+<section class="featured-section">
+  <div class="container">
+    <h2 class="section-title reveal">Nos <span class="highlight">recommandations</span></h2>
+    <p class="section-sub reveal">Des formations et ressources v&eacute;rifi&eacute;es. Gratuites ou accessibles. Tri&eacute;es pour toi.</p>
+
+    <!-- Filtres -->
+    <div class="filters reveal" style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;">
+      <button class="filter-btn active" data-filter="all" onclick="filterFormations('all', this)">Tout</button>
+      <button class="filter-btn" data-filter="gratuit" onclick="filterFormations('gratuit', this)">&#127873; Gratuit</button>
+      <button class="filter-btn" data-filter="tech" onclick="filterFormations('tech', this)">&#128187; Tech</button>
+      <button class="filter-btn" data-filter="business" onclick="filterFormations('business', this)">&#128640; Business</button>
+      <button class="filter-btn" data-filter="creation" onclick="filterFormations('creation', this)">&#127912; Cr&eacute;ation</button>
+      <button class="filter-btn" data-filter="contenu" onclick="filterFormations('contenu', this)">&#127908; Contenu</button>
+      <button class="filter-btn" data-filter="dev-perso" onclick="filterFormations('dev-perso', this)">&#128170; Dev perso</button>
+    </div>
+
+    <div class="formation-list" id="formationList">
+
+      <div class="formation-card reveal reveal-d1" data-cat="tech,gratuit">
+        <div class="formation-logo">&#128187;</div>
+        <div class="formation-info">
+          <div class="formation-name">OpenClassrooms &mdash; Parcours gratuits</div>
+          <div class="formation-desc">D&eacute;veloppement web, UX design, marketing digital, gestion de projet. Cours structur&eacute;s, certifiants, reconnus par l'&Eacute;tat. Le meilleur point de d&eacute;part en France.</div>
+          <div class="formation-meta">
+            <span>&#9201; 20-200h selon parcours</span>
+            <span>&#127891; Certificat reconnu</span>
+            <span>&#11088; 4.6/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <span class="formation-badge-free">Gratuit</span>
+          <a href="https://openclassrooms.com/fr/courses" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal reveal-d2" data-cat="tech,gratuit">
+        <div class="formation-logo">&#9889;</div>
+        <div class="formation-info">
+          <div class="formation-name">freeCodeCamp &mdash; Apprendre &agrave; coder</div>
+          <div class="formation-desc">HTML, CSS, JavaScript, Python, React. Le programme le plus complet au monde pour apprendre &agrave; coder gratuitement. Utilis&eacute; par des millions de d&eacute;veloppeurs.</div>
+          <div class="formation-meta">
+            <span>&#9201; 300h+ de contenu</span>
+            <span>&#127891; Certificat</span>
+            <span>&#11088; 4.8/5</span>
+            <span>&#127758; En anglais</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <span class="formation-badge-free">Gratuit</span>
+          <a href="https://www.freecodecamp.org/" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal reveal-d3" data-cat="creation,gratuit">
+        <div class="formation-logo">&#127912;</div>
+        <div class="formation-info">
+          <div class="formation-name">Figma &mdash; Apprendre le design UX/UI</div>
+          <div class="formation-desc">Tutoriels officiels Figma + communaut&eacute; francophone. De z&eacute;ro &agrave; ton premier prototype en quelques jours. L'outil utilis&eacute; par 90% des designers.</div>
+          <div class="formation-meta">
+            <span>&#9201; Rythme libre</span>
+            <span>&#128421; Outil gratuit</span>
+            <span>&#11088; 4.9/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <span class="formation-badge-free">Gratuit</span>
+          <a href="https://help.figma.com/hc/en-us/categories/360002051613-Getting-started" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="tech">
+        <div class="formation-logo">&#128421;</div>
+        <div class="formation-info">
+          <div class="formation-name">No-Code avec Notion, Airtable & Make</div>
+          <div class="formation-desc">Cr&eacute;e tes premiers outils, sites et automatisations sans code. Id&eacute;al pour lancer un business rapidement avec z&eacute;ro comp&eacute;tence technique.</div>
+          <div class="formation-meta">
+            <span>&#9201; 12h de contenu</span>
+            <span>&#127891; Certificat</span>
+            <span>&#11088; 4.8/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <div class="formation-price">&agrave; partir de 19&euro;</div>
+          <a href="https://openclassrooms.com/fr/courses/7168336-apprenez-les-bases-du-no-code" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="business,gratuit">
+        <div class="formation-logo">&#128640;</div>
+        <div class="formation-info">
+          <div class="formation-name">Coursera &mdash; Fondements du marketing digital (Google)</div>
+          <div class="formation-desc">Le certificat Google reconnu partout. Strat&eacute;gie, publicit&eacute;, r&eacute;seaux sociaux, analytics. Gratuit en mode audit.</div>
+          <div class="formation-meta">
+            <span>&#9201; 40h</span>
+            <span>&#127891; Certificat Google</span>
+            <span>&#11088; 4.7/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <span class="formation-badge-free">Gratuit (audit)</span>
+          <a href="https://www.coursera.org/professional-certificates/google-digital-marketing-ecommerce" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="business">
+        <div class="formation-logo">&#128176;</div>
+        <div class="formation-info">
+          <div class="formation-name">LiveMentor &mdash; Formation Entrepreneuriat</div>
+          <div class="formation-desc">La r&eacute;f&eacute;rence fran&ccedil;aise pour lancer son projet. Mentorat individuel, communaut&eacute; active. &Eacute;ligible CPF. De l'id&eacute;e aux premiers clients.</div>
+          <div class="formation-meta">
+            <span>&#9201; 3 mois</span>
+            <span>&#128100; Mentorat 1-to-1</span>
+            <span>&#11088; 4.7/5</span>
+            <span>&#127467;&#127479; 100% fran&ccedil;ais</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <div class="formation-price">&Eacute;ligible CPF</div>
+          <a href="https://www.livementor.com/" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="contenu,gratuit">
+        <div class="formation-logo">&#127908;</div>
+        <div class="formation-info">
+          <div class="formation-name">YouTube &mdash; Cr&eacute;er du contenu (guides gratuits)</div>
+          <div class="formation-desc">Cha&icirc;nes recommand&eacute;es : Marketing Mania, Antoine BM, Yomi Denzel. Strat&eacute;gie de contenu, montage, mon&eacute;tisation. Tout est l&agrave;, gratuit.</div>
+          <div class="formation-meta">
+            <span>&#9201; Illimit&eacute;</span>
+            <span>&#127911; Format vid&eacute;o</span>
+            <span>&#127467;&#127479; Fran&ccedil;ais</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <span class="formation-badge-free">Gratuit</span>
+          <a href="https://www.youtube.com/@MarketingMania" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="contenu">
+        <div class="formation-logo">&#128248;</div>
+        <div class="formation-info">
+          <div class="formation-name">TikTok & Instagram &mdash; De 0 &agrave; 10k en 90 jours</div>
+          <div class="formation-desc">Algorithme, formats viraux, montage CapCut, strat&eacute;gie de croissance. Le guide pour devenir cr&eacute;ateur de contenu et vivre de sa passion.</div>
+          <div class="formation-meta">
+            <span>&#9201; 18h</span>
+            <span>&#127891; Templates inclus</span>
+            <span>&#11088; 4.6/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <div class="formation-price">&agrave; partir de 29&euro;</div>
+          <a href="https://www.udemy.com/topic/tiktok-marketing/" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="dev-perso,gratuit">
+        <div class="formation-logo">&#128170;</div>
+        <div class="formation-info">
+          <div class="formation-name">Confiance en soi & prise de parole</div>
+          <div class="formation-desc">Pitcher son projet, prendre la parole, d&eacute;velopper son charisme. Les soft skills qui font la diff&eacute;rence entre quelqu'un qui r&ecirc;ve et quelqu'un qui agit.</div>
+          <div class="formation-meta">
+            <span>&#9201; 8h</span>
+            <span>&#128100; Coaching live</span>
+            <span>&#11088; 4.8/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <div class="formation-price">&agrave; partir de 19&euro;</div>
+          <a href="https://openclassrooms.com/fr/courses/4577696-prenez-la-parole-en-public" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+      <div class="formation-card reveal" data-cat="dev-perso,gratuit">
+        <div class="formation-logo">&#128218;</div>
+        <div class="formation-info">
+          <div class="formation-name">Ikigai &mdash; Trouver son pourquoi (livre)</div>
+          <div class="formation-desc">Le livre qui a inspir&eacute; Trouve ta Voie. D&eacute;couvre la m&eacute;thode japonaise pour trouver ta raison d'&ecirc;tre. Compl&eacute;mentaire parfait &agrave; nos r&eacute;sultats IA.</div>
+          <div class="formation-meta">
+            <span>&#128214; Livre</span>
+            <span>&#9201; 3h de lecture</span>
+            <span>&#11088; 4.5/5</span>
+          </div>
+        </div>
+        <div class="formation-actions">
+          <div class="formation-price">~8&euro;</div>
+          <a href="https://www.amazon.fr/Ikigai-Japonais-secret-longue-heureuse/dp/226608945X" target="_blank" rel="noopener" class="formation-link">Voir &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA Partenaire -->
+<section class="partner-cta">
+  <div class="container">
+    <div class="partner-box reveal">
+      <h2>&#129309; Tu es formateur ou cr&eacute;ateur de contenu ?</h2>
+      <p>Tu proposes une formation, un mentorat ou un programme en lien avec l'orientation, l'entrepreneuriat ou le d&eacute;veloppement de carri&egrave;re ? On cherche des partenaires de qualit&eacute; &agrave; recommander &agrave; notre communaut&eacute;.</p>
+      <a href="/cdn-cgi/l/email-protection#afdfcedddbcac1cec6ddcadcefdbddc0dad9cadbced9c0c6ca81c9dd" class="btn-primary">Devenir partenaire &#10148;</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Trouve<span>ta</span>Voie</div>
+      <ul class="footer-links">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="questionnaire.html">Faire le test</a></li>
+        <li><a href="a-propos.html">&Agrave; propos</a></li>
+        <li><a href="/cdn-cgi/l/email-protection#d7b4b8b9a3b6b4a397a3a5b8a2a1b2a3b6a1b8beb2f9b1a5">Contact</a></li>
+      </ul>
+    </div>
+    <p class="footer-copy">&copy; 2025 Trouve ta Voie. Fait avec &#10084;&#65039; pour ceux qui cherchent leur chemin.</p>
+  </div>
+</footer>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+revealEls.forEach(el => observer.observe(el));
+
+function filterFormations(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.formation-card').forEach(card => {
+    const cats = card.dataset.cat || '';
+    if (cat === 'all' || cats.includes(cat)) { card.classList.remove('hidden'); }
+    else { card.classList.add('hidden'); }
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trouve ta Voie — Le Questionnaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #06060f;
+  --bg-card: #0c0c1d;
+  --bg-card-hover: #111128;
+  --bg-input: #0a0a1a;
+  --purple-primary: #7c3aed;
+  --purple-light: #a78bfa;
+  --purple-glow: #8b5cf6;
+  --blue-accent: #3b82f6;
+  --cyan-accent: #06b6d4;
+  --text-primary: #f1f0ff;
+  --text-secondary: #a5a3c7;
+  --text-muted: #6b6991;
+  --gradient-hero: linear-gradient(135deg, #7c3aed 0%, #3b82f6 50%, #06b6d4 100%);
+  --venn-love: #f472b6;
+  --venn-talent: #a78bfa;
+  --venn-money: #60a5fa;
+  --border-subtle: rgba(124, 58, 237, 0.08);
+  --border-light: rgba(124, 58, 237, 0.15);
+  --border-focus: rgba(124, 58, 237, 0.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Grain */
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 128px;
+}
+
+/* Ambient glows */
+.ambient-glow-1 {
+  position: fixed; top: -20%; left: -15%; width: 50%; height: 60%;
+  background: radial-gradient(ellipse, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+  pointer-events: none; animation: ambientFloat 12s ease-in-out infinite;
+}
+.ambient-glow-2 {
+  position: fixed; bottom: -20%; right: -10%; width: 45%; height: 55%;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+  pointer-events: none; animation: ambientFloat 15s ease-in-out infinite reverse;
+}
+@keyframes ambientFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -15px) scale(1.03); }
+}
+
+/* ========== NAVBAR ========== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6, 6, 15, 0.8);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.logo {
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo span {
+  font-weight: 400; -webkit-text-fill-color: var(--cyan-accent);
+  font-style: italic; margin: 0 0.08em;
+}
+.nav-back {
+  color: var(--text-muted); font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-back:hover { color: var(--text-secondary); }
+
+/* ========== PROGRESS BAR ========== */
+.progress-container {
+  position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+  height: 3px; background: rgba(124, 58, 237, 0.08);
+}
+.progress-bar {
+  height: 100%; width: 0%; background: var(--gradient-hero);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
+}
+
+/* ========== MAIN LAYOUT ========== */
+.questionnaire-page {
+  max-width: 720px; margin: 0 auto; padding: 6.5rem 1.5rem 4rem;
+  position: relative; z-index: 2;
+}
+
+/* Header */
+.quiz-header {
+  text-align: center; margin-bottom: 3rem;
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.quiz-header h1 {
+  font-family: 'Sora', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800; line-height: 1.2; letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+.highlight {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.quiz-header p {
+  font-size: 1rem; color: var(--text-secondary); line-height: 1.65; max-width: 520px; margin: 0 auto;
+}
+
+/* ========== SECTION BLOCKS ========== */
+.quiz-section {
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+.quiz-section:nth-child(1) { animation-delay: 0.1s; }
+.quiz-section:nth-child(2) { animation-delay: 0.25s; }
+.quiz-section:nth-child(3) { animation-delay: 0.4s; }
+
+.section-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle);
+}
+.section-icon {
+  width: 46px; height: 46px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.section-love .section-icon { background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.2); }
+.section-talent .section-icon { background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.2); }
+.section-money .section-icon { background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.2); }
+
+.section-header-text h2 {
+  font-family: 'Sora', sans-serif; font-size: 1.15rem; font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 0.2rem;
+}
+.section-love .section-header-text h2 { color: var(--venn-love); }
+.section-talent .section-header-text h2 { color: var(--venn-talent); }
+.section-money .section-header-text h2 { color: var(--venn-money); }
+
+.section-header-text p {
+  font-size: 0.82rem; color: var(--text-muted);
+}
+
+/* ========== QUESTIONS ========== */
+.question-group {
+  margin-bottom: 1.5rem;
+}
+.question-label {
+  display: block; font-size: 0.92rem; font-weight: 500; color: var(--text-primary);
+  margin-bottom: 0.6rem; line-height: 1.5;
+}
+.question-label .q-number {
+  color: var(--text-muted); font-size: 0.78rem; font-weight: 400; margin-right: 0.35rem;
+}
+.question-hint {
+  font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem; font-style: italic;
+}
+
+/* Text inputs */
+.text-input {
+  width: 100%; padding: 0.85rem 1.15rem; border-radius: 12px;
+  background: var(--bg-input); border: 1px solid var(--border-subtle);
+  color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 0.92rem;
+  outline: none; transition: all 0.3s; line-height: 1.55;
+  resize: vertical; min-height: 44px;
+}
+.text-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
+  background: rgba(12, 12, 29, 0.8);
+}
+.text-input::placeholder { color: var(--text-muted); font-size: 0.88rem; }
+textarea.text-input { min-height: 80px; }
+
+/* Chip selectors (multi-choice) */
+.chip-grid {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+}
+.chip {
+  padding: 0.55rem 1rem; border-radius: 50px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); font-size: 0.85rem; font-weight: 400;
+  cursor: pointer; transition: all 0.25s; user-select: none;
+}
+.chip:hover {
+  border-color: var(--border-light); background: var(--bg-card-hover);
+}
+.chip.selected {
+  border-color: var(--purple-primary); background: rgba(124, 58, 237, 0.12);
+  color: var(--purple-light); font-weight: 500;
+}
+.section-love .chip.selected { border-color: var(--venn-love); background: rgba(244, 114, 182, 0.1); color: var(--venn-love); }
+.section-talent .chip.selected { border-color: var(--venn-talent); background: rgba(167, 139, 250, 0.1); color: var(--venn-talent); }
+.section-money .chip.selected { border-color: var(--venn-money); background: rgba(96, 165, 250, 0.1); color: var(--venn-money); }
+
+/* Range slider */
+.range-group {
+  display: flex; align-items: center; gap: 1rem;
+}
+.range-input {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 4px; outline: none;
+  background: linear-gradient(to right, var(--purple-primary) 0%, var(--border-subtle) 0%);
+  transition: background 0.2s;
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--gradient-hero); cursor: pointer;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+  transition: transform 0.2s;
+}
+.range-input::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.range-labels {
+  display: flex; justify-content: space-between; margin-top: 0.35rem;
+}
+.range-labels span { font-size: 0.72rem; color: var(--text-muted); }
+.range-value {
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.1rem;
+  min-width: 32px; text-align: center;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ========== SUBMIT AREA ========== */
+.submit-area {
+  text-align: center; margin-top: 3rem; padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 1.1rem 2.5rem; border-radius: 60px;
+  background: var(--gradient-hero); color: white;
+  font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3), 0 0 60px rgba(124, 58, 237, 0.1);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(124, 58, 237, 0.45), 0 0 80px rgba(124, 58, 237, 0.2);
+}
+.btn-primary:disabled {
+  opacity: 0.5; cursor: not-allowed; transform: none;
+  box-shadow: none;
+}
+.btn-primary .arrow { transition: transform 0.3s; display: inline-block; }
+.btn-primary:hover .arrow { transform: translateX(3px); }
+.submit-note {
+  font-size: 0.78rem; color: var(--text-muted); margin-top: 0.85rem;
+}
+
+/* ========== LOADING STATE ========== */
+.loading-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(6, 6, 15, 0.92);
+  backdrop-filter: blur(15px);
+  flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+}
+.loading-overlay.show { display: flex; }
+
+.loading-venn {
+  width: 180px; height: 180px; position: relative;
+}
+.loading-circle {
+  position: absolute; border-radius: 50%; animation: loadPulse 2s ease-in-out infinite;
+}
+.loading-circle:nth-child(1) {
+  width: 100px; height: 100px; top: 0; left: 50%; transform: translateX(-50%);
+  border: 2px solid rgba(244, 114, 182, 0.3);
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.1);
+}
+.loading-circle:nth-child(2) {
+  width: 100px; height: 100px; bottom: 10px; left: 10px;
+  border: 2px solid rgba(167, 139, 250, 0.3);
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
+  animation-delay: 0.3s;
+}
+.loading-circle:nth-child(3) {
+  width: 100px; height: 100px; bottom: 10px; right: 10px;
+  border: 2px solid rgba(96, 165, 250, 0.3);
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.1);
+  animation-delay: 0.6s;
+}
+@keyframes loadPulse {
+  0%, 100% { opacity: 0.4; transform: translateX(var(--tx, 0)) scale(1); }
+  50% { opacity: 1; transform: translateX(var(--tx, 0)) scale(1.06); }
+}
+.loading-circle:nth-child(1) { --tx: -50%; }
+
+.loading-text {
+  text-align: center;
+}
+.loading-text h3 {
+  font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.loading-text p {
+  color: var(--text-secondary); font-size: 0.92rem;
+}
+.loading-steps {
+  display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.5rem;
+}
+.loading-step {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.85rem; color: var(--text-muted);
+  transition: all 0.4s;
+}
+.loading-step.active { color: var(--text-primary); }
+.loading-step.done { color: var(--purple-light); }
+.loading-step-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-muted); flex-shrink: 0;
+  transition: all 0.4s;
+}
+.loading-step.active .loading-step-dot {
+  background: var(--purple-primary);
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.loading-step.done .loading-step-dot {
+  background: var(--purple-light);
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+/* ========== ERROR STATE ========== */
+.error-banner {
+  display: none; padding: 1rem 1.25rem; border-radius: 12px;
+  background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5; font-size: 0.88rem; margin-bottom: 1.5rem;
+  text-align: center;
+}
+.error-banner.show { display: block; }
+
+/* ========== API KEY MODAL ========== */
+.api-modal {
+  display: flex; position: fixed; inset: 0; z-index: 300;
+  background: rgba(6, 6, 15, 0.9); backdrop-filter: blur(10px);
+  align-items: center; justify-content: center; padding: 1.5rem;
+}
+.api-modal.hidden { display: none; }
+.api-modal-box {
+  max-width: 460px; width: 100%; padding: 2.5rem; border-radius: 22px;
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  text-align: center;
+}
+.api-modal-box h2 {
+  font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+.api-modal-box p {
+  font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;
+}
+.api-input-group {
+  display: flex; gap: 0.5rem;
+}
+.api-key-input {
+  flex: 1; padding: 0.8rem 1rem; border-radius: 10px;
+  background: var(--bg-input); border: 1px solid var(--border-subtle);
+  color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 0.88rem;
+  outline: none; transition: border-color 0.3s;
+}
+.api-key-input:focus { border-color: var(--border-focus); }
+.api-key-input::placeholder { color: var(--text-muted); }
+.api-save-btn {
+  padding: 0.8rem 1.5rem; border-radius: 10px;
+  background: var(--gradient-hero); color: white;
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.88rem;
+  border: none; cursor: pointer; white-space: nowrap;
+  transition: all 0.3s;
+}
+.api-save-btn:hover { transform: translateY(-1px); }
+.api-note {
+  font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.5;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+  .questionnaire-page { padding: 5.5rem 1rem 3rem; }
+  nav { padding: 0.85rem 1.25rem; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .chip { font-size: 0.82rem; padding: 0.5rem 0.85rem; }
+  .api-input-group { flex-direction: column; }
+  .quiz-header h1 { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<!-- API key is now server-side, no modal needed -->
+<div class="api-modal hidden" id="apiModal">
+  <div class="api-modal-box">
+    <h2>&#128273; Configuration</h2>
+    <p>L'IA est pr&ecirc;te. Aucune configuration n&eacute;cessaire.</p>
+  </div>
+</div>
+
+<!-- Navbar -->
+<nav>
+  <a href="index.html" class="logo">Trouve<span>ta</span>Voie</a>
+  <a href="index.html" class="nav-back">&larr; Retour</a>
+</nav>
+
+<!-- Progress bar -->
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-venn">
+    <div class="loading-circle"></div>
+    <div class="loading-circle"></div>
+    <div class="loading-circle"></div>
+  </div>
+  <div class="loading-text">
+    <h3>L'IA analyse ton profil...</h3>
+    <p>On croise tes passions, talents et le march&eacute;</p>
+    <div class="loading-steps">
+      <div class="loading-step active" id="ls1"><div class="loading-step-dot"></div> Analyse de tes passions</div>
+      <div class="loading-step" id="ls2"><div class="loading-step-dot"></div> Identification de tes talents</div>
+      <div class="loading-step" id="ls3"><div class="loading-step-dot"></div> &Eacute;tude des opportunit&eacute;s de march&eacute;</div>
+      <div class="loading-step" id="ls4"><div class="loading-step-dot"></div> G&eacute;n&eacute;ration de tes 3 id&eacute;es</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main questionnaire -->
+<main class="questionnaire-page">
+
+  <div class="quiz-header">
+    <h1>Dis-nous qui tu es,<br>on te montre <span class="highlight">ta voie.</span></h1>
+    <p>R&eacute;ponds sinc&egrave;rement, il n'y a pas de mauvaise r&eacute;ponse. Plus tu es pr&eacute;cis, plus nos suggestions seront pertinentes.</p>
+  </div>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- ===== BLOC 1: PASSIONS ===== -->
+  <div class="quiz-section section-love">
+    <div class="section-header">
+      <div class="section-icon">&#9825;</div>
+      <div class="section-header-text">
+        <h2>Ce que tu aimes faire</h2>
+        <p>Tes passions, tes int&eacute;r&ecirc;ts, ce qui te fait vibrer</p>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">1.</span> Quelles activit&eacute;s te font perdre la notion du temps ?</label>
+      <p class="question-hint">Ex : dessiner, coder, cuisiner, discuter avec des gens, jouer de la musique...</p>
+      <textarea class="text-input" id="q1" placeholder="Quand je fais ça, je ne vois pas le temps passer..." rows="2"></textarea>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">2.</span> Quels sujets pourrais-tu explorer pendant des heures ?</label>
+      <div class="chip-grid" id="q2chips">
+        <div class="chip" data-value="Tech & innovation">Tech & innovation</div>
+        <div class="chip" data-value="Art & créativité">Art & cr&eacute;ativit&eacute;</div>
+        <div class="chip" data-value="Sport & bien-être">Sport & bien-&ecirc;tre</div>
+        <div class="chip" data-value="Business & entrepreneuriat">Business</div>
+        <div class="chip" data-value="Sciences & nature">Sciences & nature</div>
+        <div class="chip" data-value="Mode & lifestyle">Mode & lifestyle</div>
+        <div class="chip" data-value="Éducation & transmission">Education</div>
+        <div class="chip" data-value="Musique & audiovisuel">Musique & audiovisuel</div>
+        <div class="chip" data-value="Voyages & cultures">Voyages & cultures</div>
+        <div class="chip" data-value="Psychologie & relations">Psychologie</div>
+        <div class="chip" data-value="Cuisine & gastronomie">Cuisine & gastronomie</div>
+        <div class="chip" data-value="Gaming & esport">Gaming & esport</div>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">3.</span> Si tu avais une journ&eacute;e enti&egrave;re libre, sans obligation, tu ferais quoi ?</label>
+      <textarea class="text-input" id="q3" placeholder="Décris ta journée idéale..." rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- Encouragement 1 -->
+  <div class="quiz-encouragement reveal" style="text-align: center; padding: 1rem 0; opacity: 0; animation: fadeUp 0.7s 0.35s forwards;">
+    <p style="font-size: 0.88rem; color: var(--purple-light); font-weight: 500;">&#10024; Super, on commence &agrave; te cerner. Maintenant, parlons de tes super-pouvoirs.</p>
+  </div>
+
+  <!-- ===== BLOC 2: TALENTS ===== -->
+  <div class="quiz-section section-talent">
+    <div class="section-header">
+      <div class="section-icon">&#10022;</div>
+      <div class="section-header-text">
+        <h2>Ce pour quoi tu es dou&eacute;</h2>
+        <p>Tes talents naturels, tes comp&eacute;tences, ce que les autres reconnaissent en toi</p>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">4.</span> Qu'est-ce que tes proches disent que tu fais bien ?</label>
+      <p class="question-hint">M&ecirc;me les trucs qui te semblent normaux ou faciles</p>
+      <textarea class="text-input" id="q4" placeholder="Mes amis/ma famille disent souvent que je suis bon(ne) pour..." rows="2"></textarea>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">5.</span> Quelles comp&eacute;tences te viennent naturellement ?</label>
+      <div class="chip-grid" id="q5chips">
+        <div class="chip" data-value="Communication & expression">Communication</div>
+        <div class="chip" data-value="Organisation & planification">Organisation</div>
+        <div class="chip" data-value="Créativité & design">Cr&eacute;ativit&eacute;</div>
+        <div class="chip" data-value="Analyse & logique">Analyse & logique</div>
+        <div class="chip" data-value="Leadership & influence">Leadership</div>
+        <div class="chip" data-value="Empathie & écoute">Empathie & &eacute;coute</div>
+        <div class="chip" data-value="Technique & digital">Technique & digital</div>
+        <div class="chip" data-value="Rédaction & écriture">R&eacute;daction</div>
+        <div class="chip" data-value="Négociation & vente">N&eacute;gociation & vente</div>
+        <div class="chip" data-value="Résolution de problèmes">R&eacute;solution de probl&egrave;mes</div>
+        <div class="chip" data-value="Pédagogie & enseignement">P&eacute;dagogie</div>
+        <div class="chip" data-value="Travail en équipe">Travail en &eacute;quipe</div>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">6.</span> Si on te demandait de l'aide, ce serait pour quoi ?</label>
+      <textarea class="text-input" id="q6" placeholder="Les gens viennent souvent me voir pour..." rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- Encouragement 2 -->
+  <div class="quiz-encouragement reveal" style="text-align: center; padding: 1rem 0; opacity: 0; animation: fadeUp 0.7s 0.5s forwards;">
+    <p style="font-size: 0.88rem; color: var(--cyan-accent); font-weight: 500;">&#128170; Derni&egrave;re ligne droite. Plus que quelques questions et l'IA fait le reste.</p>
+  </div>
+
+  <!-- ===== BLOC 3: MARCHÉ ===== -->
+  <div class="quiz-section section-money">
+    <div class="section-header">
+      <div class="section-icon">&#9672;</div>
+      <div class="section-header-text">
+        <h2>Ce pour quoi on peut te payer</h2>
+        <p>Le march&eacute;, tes ambitions professionnelles, ta vision</p>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">7.</span> Quel type de travail t'attire le plus ?</label>
+      <div class="chip-grid" id="q7chips">
+        <div class="chip" data-value="Freelance / indépendant">Freelance</div>
+        <div class="chip" data-value="Créer mon entreprise">Cr&eacute;er mon entreprise</div>
+        <div class="chip" data-value="Salarié dans une startup">Startup</div>
+        <div class="chip" data-value="Grande entreprise">Grande entreprise</div>
+        <div class="chip" data-value="Créateur de contenu">Cr&eacute;ateur de contenu</div>
+        <div class="chip" data-value="Métier à impact social">Impact social</div>
+        <div class="chip" data-value="Travail à distance / nomade">Nomade digital</div>
+        <div class="chip" data-value="Métier manuel / terrain">Terrain / manuel</div>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">8.</span> Combien veux-tu gagner par mois (en euros) ?</label>
+      <div class="range-group">
+        <input type="range" class="range-input" id="q8" min="1000" max="10000" step="500" value="3000">
+        <span class="range-value" id="q8value">3 000&euro;</span>
+      </div>
+      <div class="range-labels">
+        <span>1 000&euro;</span>
+        <span>10 000&euro;+</span>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">9.</span> Quelle est ta situation actuelle ?</label>
+      <div class="chip-grid" id="q9chips">
+        <div class="chip" data-value="Lycéen(ne)">Lyc&eacute;en(ne)</div>
+        <div class="chip" data-value="Étudiant(e)">Etudiant(e)</div>
+        <div class="chip" data-value="En recherche d'emploi">Recherche d'emploi</div>
+        <div class="chip" data-value="En poste (reconversion)">En reconversion</div>
+        <div class="chip" data-value="Freelance / entrepreneur">Freelance</div>
+        <div class="chip" data-value="Autre">Autre</div>
+      </div>
+    </div>
+
+    <div class="question-group">
+      <label class="question-label"><span class="q-number">10.</span> Dans quel secteur aimerais-tu travailler (ou pas du tout) ?</label>
+      <textarea class="text-input" id="q10" placeholder="Ce qui m'attire ou au contraire ce que je veux éviter..." rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-area">
+    <p style="font-size: 1.05rem; color: var(--text-primary); font-weight: 500; margin-bottom: 1.25rem;">&#127919; Tes r&eacute;ponses sont pr&ecirc;tes. L'IA va croiser tout &ccedil;a et te proposer 3 voies concr&egrave;tes, rien que pour toi.</p>
+    <button class="btn-primary" id="submitBtn" onclick="submitQuiz()">
+      D&eacute;couvre ta voie
+      <span class="arrow">&rarr;</span>
+    </button>
+    <p class="submit-note">&#128274; Tes r&eacute;ponses ne sont ni stock&eacute;es, ni partag&eacute;es. L'IA analyse et oublie.</p>
+  </div>
+
+</main>
+
+<script>
+// ========== CHIP SELECTION ==========
+document.querySelectorAll('.chip-grid').forEach(grid => {
+  grid.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('selected');
+      updateProgress();
+    });
+  });
+});
+
+// ========== RANGE SLIDER ==========
+const rangeInput = document.getElementById('q8');
+const rangeValue = document.getElementById('q8value');
+
+function updateRange() {
+  const val = parseInt(rangeInput.value);
+  rangeValue.innerHTML = val >= 10000 ? '10 000&euro;+' : val.toLocaleString('fr-FR') + '&euro;';
+  const pct = ((val - 1000) / (10000 - 1000)) * 100;
+  rangeInput.style.background = `linear-gradient(to right, var(--purple-primary) ${pct}%, var(--border-subtle) ${pct}%)`;
+}
+rangeInput.addEventListener('input', () => { updateRange(); updateProgress(); });
+updateRange();
+
+// ========== PROGRESS BAR ==========
+function updateProgress() {
+  let filled = 0;
+  let total = 10;
+
+  // Text fields
+  ['q1','q3','q4','q6','q10'].forEach(id => {
+    if (document.getElementById(id).value.trim().length > 0) filled++;
+  });
+
+  // Chip grids
+  ['q2chips','q5chips','q7chips','q9chips'].forEach(id => {
+    if (document.querySelectorAll(`#${id} .chip.selected`).length > 0) filled++;
+  });
+
+  // Range always counts
+  filled++;
+
+  const pct = Math.round((filled / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+// Listen to text inputs
+['q1','q3','q4','q6','q10'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateProgress);
+});
+updateProgress();
+
+// ========== API — SERVER-SIDE PROXY (no user API key needed) ==========
+let apiKey = 'server-side'; // Flag pour indiquer que l'API est gérée côté serveur
+
+function checkApiKey() {
+  // Plus besoin de clé API — tout est géré côté serveur
+  // Le modal ne s'affiche plus
+}
+
+function saveApiKey() {
+  // Plus nécessaire
+  document.getElementById('apiModal').classList.add('hidden');
+}
+
+checkApiKey();
+
+// ========== COLLECT ANSWERS ==========
+function getSelectedChips(gridId) {
+  return Array.from(document.querySelectorAll(`#${gridId} .chip.selected`))
+    .map(c => c.dataset.value);
+}
+
+function collectAnswers() {
+  return {
+    passions: {
+      activites_flow: document.getElementById('q1').value.trim(),
+      sujets_interet: getSelectedChips('q2chips'),
+      journee_ideale: document.getElementById('q3').value.trim()
+    },
+    talents: {
+      qualites_reconnues: document.getElementById('q4').value.trim(),
+      competences_naturelles: getSelectedChips('q5chips'),
+      aide_demandee: document.getElementById('q6').value.trim()
+    },
+    marche: {
+      type_travail: getSelectedChips('q7chips'),
+      salaire_cible: parseInt(rangeInput.value),
+      situation_actuelle: getSelectedChips('q9chips'),
+      secteurs: document.getElementById('q10').value.trim()
+    }
+  };
+}
+
+// ========== VALIDATION ==========
+function validateAnswers(answers) {
+  if (!answers.passions.activites_flow && answers.passions.sujets_interet.length === 0) {
+    return "Remplis au moins une question dans la section Passions pour qu'on puisse t'aider.";
+  }
+  if (!answers.talents.qualites_reconnues && answers.talents.competences_naturelles.length === 0) {
+    return "Remplis au moins une question dans la section Talents.";
+  }
+  if (answers.marche.type_travail.length === 0 && answers.marche.situation_actuelle.length === 0) {
+    return "Remplis au moins une question dans la section Marché.";
+  }
+  return null;
+}
+
+// ========== LOADING ANIMATION ==========
+function animateLoading() {
+  const steps = ['ls1', 'ls2', 'ls3', 'ls4'];
+  let current = 0;
+
+  const interval = setInterval(() => {
+    if (current > 0) {
+      document.getElementById(steps[current - 1]).classList.remove('active');
+      document.getElementById(steps[current - 1]).classList.add('done');
+    }
+    if (current < steps.length) {
+      document.getElementById(steps[current]).classList.add('active');
+      current++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 2200);
+}
+
+// ========== SUBMIT & CALL AI via SERVER PROXY ==========
+async function callClaudeAPI(prompt, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (response.status === 429) {
+        if (attempt < retries) {
+          const waitTime = attempt * 5000;
+          updateLoadingMessage('Beaucoup de demandes... Nouvel essai dans ' + (waitTime/1000) + 's');
+          await new Promise(r => setTimeout(r, waitTime));
+          continue;
+        }
+        throw new Error("Trop de demandes. Réessaie dans 1 minute.");
+      }
+
+      if (response.status >= 500) {
+        if (attempt < retries) {
+          updateLoadingMessage("L'IA réfléchit un peu plus... Tentative " + (attempt+1) + "/" + retries);
+          await new Promise(r => setTimeout(r, 3000));
+          continue;
+        }
+        throw new Error("FALLBACK");
+      }
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Erreur. Réessaie.');
+      }
+
+      return await response.json();
+
+    } catch (err) {
+      if (err.name === 'TypeError' || (err.message && err.message.includes('fetch'))) {
+        if (attempt < retries) {
+          updateLoadingMessage('Connexion... Nouvel essai ' + (attempt+1) + '/' + retries);
+          await new Promise(r => setTimeout(r, 3000));
+          continue;
+        }
+        throw new Error("FALLBACK");
+      }
+      throw err;
+    }
+  }
+}
+
+function updateLoadingMessage(msg) {
+  const p = document.querySelector('.loading-text p');
+  if (p) p.textContent = msg;
+}
+
+
+// ========== PLAN B : RÉSULTATS DE SECOURS ==========
+const fallbackDB = {
+  "Tech & innovation": [
+    { titre: "Crée une agence de sites web no-code pour les artisans locaux", description: "Utilise des outils comme Carrd, Notion ou Framer pour créer des sites vitrines pour les boulangers, coiffeurs et commerçants de ta ville. Ils en ont tous besoin, aucun ne sait le faire.", pourquoi_toi: "Tu es attiré par la tech et tu peux apprendre le no-code en quelques jours.", premier_pas: "Crée ton premier site gratuit pour un commerçant de ton quartier comme portfolio.", potentiel_revenus: "300-800€ par site, 2 000-5 000€/mois avec 5-8 clients", type: "business" },
+    { titre: "Deviens consultant en automatisation pour les PME", description: "Aide les petites entreprises à automatiser leurs tâches répétitives avec Make, Zapier ou Airtable. Tu leur fais gagner du temps, ils te paient pour ça.", pourquoi_toi: "Ton intérêt pour la tech combiné à ta capacité d'analyse te rend idéal pour ce rôle.", premier_pas: "Automatise un processus dans ta propre vie, puis propose-le gratuitement à une entreprise.", potentiel_revenus: "2 000-6 000€/mois en freelance", type: "business" }
+  ],
+  "Art & créativité": [
+    { titre: "Lance un studio de contenu visuel pour les marques sur Instagram", description: "Crée des visuels, reels et stories pour les marques qui veulent être belles sur les réseaux sociaux.", pourquoi_toi: "Ta créativité naturelle est exactement ce que les marques recherchent.", premier_pas: "Crée 5 visuels pour une marque fictive et poste-les comme portfolio sur Instagram.", potentiel_revenus: "1 500-4 000€/mois avec 3-5 clients récurrents", type: "business" },
+    { titre: "Deviens UX/UI designer freelance", description: "Apprends Figma en 3 mois et propose tes services aux startups qui cherchent quelqu'un pour rendre leurs apps belles et intuitives.", pourquoi_toi: "Tu as l'œil pour le beau et la capacité de comprendre les utilisateurs.", premier_pas: "Suis le cours gratuit Figma sur YouTube et crée 3 maquettes pour ton portfolio.", potentiel_revenus: "2 500-6 000€/mois en freelance", type: "metier" }
+  ],
+  "Business & entrepreneuriat": [
+    { titre: "Crée un média TikTok éducatif dans ta niche", description: "Choisis un sujet que tu connais bien et crée du contenu éducatif court sur TikTok. Monétise avec de l'affiliation, du sponsoring ou tes propres produits digitaux.", pourquoi_toi: "Ton esprit entrepreneurial et ta capacité à communiquer sont tes meilleurs atouts.", premier_pas: "Publie ta première vidéo TikTok de 60 secondes sur un sujet que tu maîtrises.", potentiel_revenus: "1 000-10 000€/mois selon l'audience", type: "business" },
+    { titre: "Lance une micro-agence de marketing pour les restos locaux", description: "Les restaurants ont besoin de visibilité en ligne mais n'y connaissent rien. Gère leur Google My Business, Instagram et avis.", pourquoi_toi: "Tu as le sens du business et tu sais comment attirer l'attention.", premier_pas: "Propose à un restaurant de ton quartier de gérer ses réseaux gratuitement pendant 1 mois.", potentiel_revenus: "2 000-5 000€/mois avec 4-6 clients à 500€/mois", type: "business" }
+  ],
+  "Sport & bien-être": [
+    { titre: "Deviens coach sportif en ligne avec des programmes personnalisés", description: "Crée des programmes de fitness accessibles via une app ou un PDF. Commence avec ton entourage, puis scale avec du contenu.", pourquoi_toi: "Ta passion pour le sport et ton énergie sont contagieuses.", premier_pas: "Crée un programme gratuit de 30 jours et propose-le à 10 personnes de ton entourage.", potentiel_revenus: "1 500-5 000€/mois avec du coaching + programmes", type: "business" }
+  ],
+  "default": [
+    { titre: "Crée une activité de freelance autour de ta compétence principale", description: "Identifie la compétence pour laquelle on te demande le plus souvent de l'aide. Propose-la comme service sur Malt, Fiverr ou en direct.", pourquoi_toi: "Tu as déjà un talent que les autres reconnaissent — il suffit de le monétiser.", premier_pas: "Crée ton profil sur Malt.fr avec une offre claire et un tarif compétitif.", potentiel_revenus: "1 000-4 000€/mois selon la compétence", type: "business" },
+    { titre: "Lance un podcast ou une chaîne YouTube dans ton domaine de passion", description: "Partage tes connaissances et ton parcours. Le contenu long crée de la confiance et ouvre des portes.", pourquoi_toi: "Ta curiosité et ta capacité à apprendre vite te permettent de créer du contenu de valeur.", premier_pas: "Enregistre ton premier épisode avec ton téléphone. Pas besoin de matériel pro.", potentiel_revenus: "500-5 000€/mois après 6-12 mois de régularité", type: "projet" },
+    { titre: "Deviens assistant virtuel spécialisé pour les entrepreneurs", description: "Gère les emails, réseaux sociaux, planning et tâches admin pour des entrepreneurs débordés.", pourquoi_toi: "Ton organisation et ta polyvalence sont exactement ce dont les entrepreneurs ont besoin.", premier_pas: "Inscris-toi sur Befreelancr ou Malt et propose tes services d'assistant virtuel.", potentiel_revenus: "1 500-3 500€/mois avec 2-4 clients réguliers", type: "metier" }
+  ]
+};
+
+function generateFallbackResults(answers) {
+  const interests = answers.passions.sujets_interet || [];
+  const skills = answers.talents.competences_naturelles || [];
+  let idees = [];
+  for (const interest of interests) {
+    if (fallbackDB[interest]) idees.push(...fallbackDB[interest]);
+  }
+  if (idees.length < 3) {
+    for (const d of fallbackDB['default']) {
+      if (idees.length >= 3) break;
+      if (!idees.find(i => i.titre === d.titre)) idees.push(d);
+    }
+  }
+  idees = idees.slice(0, 3);
+  return {
+    profil_resume: `Tu es quelqu'un de curieux avec un vrai potentiel. Tes centres d'intérêt (${interests.slice(0,2).join(', ') || 'variés'}) et tes compétences (${skills.slice(0,2).join(', ') || 'multiples'}) te donnent des opportunités concrètes.`,
+    zone_de_valeur: `L'intersection entre ${interests[0] || 'tes passions'}, ${skills[0] || 'tes talents'} et les besoins du marché ouvre des voies prometteuses pour toi.`,
+    passions_cles: interests.slice(0,3).length > 0 ? interests.slice(0,3) : ["Curiosité", "Apprentissage", "Création"],
+    talents_cles: skills.slice(0,3).length > 0 ? skills.slice(0,3) : ["Polyvalence", "Adaptabilité", "Motivation"],
+    marche_cles: (answers.marche.type_travail||[]).slice(0,3).length > 0 ? answers.marche.type_travail.slice(0,3) : ["Freelance", "Digital", "Services"],
+    idees: idees,
+    is_fallback: true
+  };
+}
+
+async function submitQuiz() {
+  if (!apiKey) { document.getElementById('apiModal').classList.remove('hidden'); return; }
+
+  const answers = collectAnswers();
+  const errorMsg = validateAnswers(answers);
+  if (errorMsg) {
+    const banner = document.getElementById('errorBanner');
+    banner.textContent = errorMsg;
+    banner.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => banner.classList.remove('show'), 4000);
+    return;
+  }
+
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('submitBtn').disabled = true;
+  animateLoading();
+
+  const prompt = `Tu es un coach d'orientation expert. On te donne les réponses d'un utilisateur à un questionnaire d'orientation. Ton rôle est d'analyser l'intersection entre ses passions, ses talents et les opportunités de marché pour lui proposer 3 idées concrètes.
+
+RÉPONSES DE L'UTILISATEUR :
+
+## PASSIONS (Ce qu'il/elle aime faire)
+- Activités qui font perdre la notion du temps : ${answers.passions.activites_flow || 'Non renseigné'}
+- Sujets d'intérêt : ${answers.passions.sujets_interet.join(', ') || 'Non renseigné'}
+- Journée idéale : ${answers.passions.journee_ideale || 'Non renseigné'}
+
+## TALENTS (Ce pour quoi il/elle est doué)
+- Qualités reconnues par les proches : ${answers.talents.qualites_reconnues || 'Non renseigné'}
+- Compétences naturelles : ${answers.talents.competences_naturelles.join(', ') || 'Non renseigné'}
+- Aide demandée par les autres : ${answers.talents.aide_demandee || 'Non renseigné'}
+
+## MARCHÉ (Ce pour quoi on peut le/la payer)
+- Type de travail recherché : ${answers.marche.type_travail.join(', ') || 'Non renseigné'}
+- Salaire cible : ${answers.marche.salaire_cible}€/mois
+- Situation actuelle : ${answers.marche.situation_actuelle.join(', ') || 'Non renseigné'}
+- Secteurs d'intérêt : ${answers.marche.secteurs || 'Non renseigné'}
+
+RÉPONDS UNIQUEMENT en JSON valide (sans backticks, sans texte avant/après) avec cette structure exacte :
+{
+  "profil_resume": "Un paragraphe de 2-3 phrases résumant le profil unique de la personne",
+  "zone_de_valeur": "Une phrase décrivant l'intersection idéale entre passions, talents et marché",
+  "passions_cles": ["passion 1", "passion 2", "passion 3"],
+  "talents_cles": ["talent 1", "talent 2", "talent 3"],
+  "marche_cles": ["opportunité 1", "opportunité 2", "opportunité 3"],
+  "idees": [
+    {
+      "titre": "Titre court et accrocheur",
+      "description": "Description détaillée en 2-3 phrases, hyper concrète",
+      "pourquoi_toi": "Pourquoi cette idée correspond à CE profil (1-2 phrases)",
+      "premier_pas": "La première action concrète à faire maintenant",
+      "potentiel_revenus": "Estimation réaliste de revenus",
+      "type": "metier | projet | business"
+    },
+    { "titre":"...","description":"...","pourquoi_toi":"...","premier_pas":"...","potentiel_revenus":"...","type":"..." },
+    { "titre":"...","description":"...","pourquoi_toi":"...","premier_pas":"...","potentiel_revenus":"...","type":"..." }
+  ]
+}
+
+RÈGLES :
+- Idées HYPER CONCRÈTES. Pas "marketing" mais "Lance une agence de contenu TikTok pour les restaurants locaux"
+- Réaliste et atteignable depuis la situation actuelle
+- Potentiel de revenus correspondant au salaire cible
+- Ton bienveillant mais direct
+- Chaque idée utilise AU MOINS une passion + un talent + une opportunité de marché`;
+
+  try {
+    const data = await callClaudeAPI(prompt);
+    const text = data.content[0].text;
+    const clean = text.replace(/\x60\x60\x60json|\x60\x60\x60/g, '').trim();
+    let results;
+    try {
+      results = JSON.parse(clean);
+    } catch (parseErr) {
+      const jsonMatch = clean.match(/\{[\s\S]*\}/);
+      if (jsonMatch) { results = JSON.parse(jsonMatch[0]); }
+      else { throw new Error("FALLBACK"); }
+    }
+    if (!results.idees || results.idees.length < 3) throw new Error("FALLBACK");
+
+    const storeData = { answers, results, timestamp: new Date().toISOString() };
+    const encoded = encodeURIComponent(JSON.stringify(storeData));
+    window.location.href = 'resultats.html?data=' + encoded;
+
+  } catch (err) {
+    console.error('Erreur:', err);
+
+    // PLAN B — si c'est une erreur technique, on utilise le fallback
+    const needsFallback = (
+      err.message === "FALLBACK" ||
+      err.message.includes("indisponible") ||
+      err.message.includes("connexion") ||
+      err.message.includes("Trop de demandes") ||
+      err.message.includes("FORMAT")
+    );
+
+    if (needsFallback) {
+      console.log('Plan B activé — résultats de secours');
+      updateLoadingMessage("On prépare tes résultats...");
+      await new Promise(r => setTimeout(r, 1500));
+      const fallback = generateFallbackResults(answers);
+      const storeData = { answers, results: fallback, timestamp: new Date().toISOString() };
+      const encoded = encodeURIComponent(JSON.stringify(storeData));
+      window.location.href = 'resultats.html?data=' + encoded;
+      return;
+    }
+
+    // Erreur qui nécessite une action utilisateur (clé API invalide)
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('submitBtn').disabled = false;
+    const banner = document.getElementById('errorBanner');
+    banner.innerHTML = '<div style="margin-bottom:0.5rem;font-size:1.1rem;">&#128533;</div><strong>' + (err.message || "Une erreur est survenue.") + '</strong><div style="margin-top:0.5rem;font-size:0.82rem;opacity:0.8;">Clique sur "Découvre ta voie" pour réessayer.</div>';
+    banner.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelectorAll('.loading-step').forEach(s => s.classList.remove('active','done'));
+    updateLoadingMessage("On croise tes passions, talents et le marché");
+  }
+}
+</script>
+</body>
+</html>

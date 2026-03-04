@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trouve ta Voie — &Agrave; propos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #06060f; --bg-card: #0c0c1d; --bg-card-hover: #111128;
+  --purple-primary: #7c3aed; --purple-light: #a78bfa; --purple-glow: #8b5cf6;
+  --blue-accent: #3b82f6; --cyan-accent: #06b6d4;
+  --text-primary: #f1f0ff; --text-secondary: #a5a3c7; --text-muted: #6b6991;
+  --gradient-hero: linear-gradient(135deg, #7c3aed 0%, #3b82f6 50%, #06b6d4 100%);
+  --border-subtle: rgba(124, 58, 237, 0.08); --border-light: rgba(124, 58, 237, 0.15);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg-deep); color: var(--text-primary); font-family: 'Outfit', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { color: var(--purple-light); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--text-primary); }
+.grain { position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.022; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; background-size: 128px; }
+.highlight { background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(6,6,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); }
+.logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+.logo span { font-weight: 400; -webkit-text-fill-color: var(--cyan-accent); font-style: italic; margin: 0 0.08em; }
+.nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--text-secondary); font-size: 0.9rem; }
+.nav-links a:hover { color: var(--text-primary); }
+
+.container { max-width: 760px; margin: 0 auto; padding: 0 2rem; }
+.page-content { padding: 7rem 0 4rem; position: relative; z-index: 2; }
+
+/* Hero */
+.about-hero { text-align: center; margin-bottom: 4rem; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.about-hero h1 { font-family: 'Sora', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; margin-bottom: 1rem; }
+.about-hero p { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; max-width: 560px; margin: 0 auto; }
+
+/* Story section */
+.story { margin-bottom: 4rem; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.15s forwards; opacity: 0; }
+.story-card { padding: 2.5rem; border-radius: 22px; background: linear-gradient(135deg, rgba(124,58,237,0.05) 0%, rgba(59,130,246,0.03) 100%); border: 1px solid var(--border-light); }
+.story-card .quote-mark { font-size: 3.5rem; line-height: 1; opacity: 0.2; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.story-card p { font-size: 1rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 1rem; }
+.story-card p strong { color: var(--text-primary); }
+.story-card .signature { font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 600; color: var(--purple-light); margin-top: 1.5rem; }
+
+/* Values */
+.values { margin-bottom: 4rem; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; opacity: 0; }
+.values h2 { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 1.75rem; letter-spacing: -0.02em; }
+.values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.value-item { padding: 1.5rem; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); }
+.value-item .v-icon { font-size: 1.3rem; margin-bottom: 0.6rem; }
+.value-item h3 { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.value-item p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* Legal */
+.legal { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.45s forwards; opacity: 0; }
+.legal h2 { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 1.5rem; padding-top: 3rem; border-top: 1px solid var(--border-subtle); }
+.legal-block { margin-bottom: 2rem; }
+.legal-block h3 { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: var(--purple-light); margin-bottom: 0.6rem; }
+.legal-block p { font-size: 0.88rem; line-height: 1.75; color: var(--text-secondary); }
+
+/* Footer */
+footer { padding: 3rem 0 2rem; border-top: 1px solid var(--border-subtle); margin-top: 3rem; }
+.footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+.footer-logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.2rem; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.footer-logo span { -webkit-text-fill-color: var(--cyan-accent); font-style: italic; font-weight: 400; margin: 0 0.08em; }
+.footer-links { display: flex; gap: 2rem; list-style: none; }
+.footer-links a { color: var(--text-muted); font-size: 0.85rem; }
+.footer-links a:hover { color: var(--text-secondary); }
+.footer-copy { font-size: 0.78rem; color: var(--text-muted); width: 100%; text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); }
+
+@media (max-width: 600px) {
+  .container { padding: 0 1.25rem; }
+  .values-grid { grid-template-columns: 1fr; }
+  .story-card { padding: 1.75rem; }
+  .nav-links { display: none; }
+  .page-content { padding: 5.5rem 0 3rem; }
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav>
+  <a href="index.html" class="logo">Trouve<span>ta</span>Voie</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="questionnaire.html">Faire le test</a></li>
+    <li><a href="formations.html">Formations</a></li>
+  </ul>
+</nav>
+
+<main class="page-content">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="about-hero">
+      <h1>&Agrave; propos de <span class="highlight">Trouve ta Voie</span></h1>
+      <p>N&eacute; de la frustration d'un jeune qui ne trouvait pas sa place, ce projet est devenu une mission : aider chaque personne &agrave; d&eacute;couvrir ce pour quoi elle est faite.</p>
+    </div>
+
+    <!-- Story -->
+    <div class="story">
+      <div class="story-card">
+        <div class="quote-mark">&laquo;</div>
+        <p>Je m'appelle <strong>Lenny</strong>, j'ai 22 ans. Pendant des ann&eacute;es, j'ai cherch&eacute; ma voie. J'ai essay&eacute; des fili&egrave;res qui ne me correspondaient pas, pass&eacute; des tests d'orientation qui me disaient des trucs vagues comme &laquo; tu es fait pour le commerce &raquo;.</p>
+        <p>J'ai r&eacute;alis&eacute; que le probl&egrave;me n'&eacute;tait pas moi &mdash; c'&eacute;tait les outils. Aucun ne croisait vraiment ce que j'aime, ce pour quoi je suis dou&eacute;, et ce qui peut me faire vivre. Alors j'ai d&eacute;cid&eacute; de <strong>cr&eacute;er celui que j'aurais voulu avoir</strong>.</p>
+        <p>Trouve ta Voie, c'est un outil gratuit, propuls&eacute; par l'IA, qui analyse l'intersection unique entre tes passions, tes talents et les opportunit&eacute;s du march&eacute;. Et qui te propose <strong>3 id&eacute;es concr&egrave;tes</strong> &mdash; pas des labels, des vraies pistes d'action.</p>
+        <p>Ce projet, c'est ma fa&ccedil;on de dire : <strong>personne ne devrait rester perdu</strong>.</p>
+        <div class="signature">&mdash; Lenny, fondateur de Trouve ta Voie</div>
+      </div>
+    </div>
+
+    <!-- Values -->
+    <div class="values">
+      <h2>Nos <span class="highlight">valeurs</span></h2>
+      <div class="values-grid">
+        <div class="value-item">
+          <div class="v-icon">&#128161;</div>
+          <h3>Concret, pas vague</h3>
+          <p>On ne dit pas &laquo; marketing &raquo;. On dit &laquo; lance une agence de contenu TikTok pour les restos &raquo;. Chaque suggestion est actionnable.</p>
+        </div>
+        <div class="value-item">
+          <div class="v-icon">&#127911;</div>
+          <h3>Accessible &agrave; tous</h3>
+          <p>100% gratuit. Pas de paywall. Pas de pi&egrave;ge. Tout le monde m&eacute;rite un accompagnement de qualit&eacute;, quel que soit son budget.</p>
+        </div>
+        <div class="value-item">
+          <div class="v-icon">&#129303;</div>
+          <h3>Bienveillant mais direct</h3>
+          <p>On ne te berce pas d'illusions. On te guide sinc&egrave;rement, comme un grand fr&egrave;re qui a de l'exp&eacute;rience et qui veut ton bien.</p>
+        </div>
+        <div class="value-item">
+          <div class="v-icon">&#128274;</div>
+          <h3>Respect de ta vie priv&eacute;e</h3>
+          <p>Tes r&eacute;ponses sont trait&eacute;es de mani&egrave;re anonyme. Aucune donn&eacute;e n'est revendue, jamais. On utilise tes infos uniquement pour g&eacute;n&eacute;rer tes r&eacute;sultats.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal -->
+    <div class="legal" id="mentions-legales">
+      <h2>Mentions l&eacute;gales</h2>
+
+      <div class="legal-block">
+        <h3>&Eacute;diteur du site</h3>
+        <p>Trouve ta Voie est un projet personnel &eacute;dit&eacute; par Lenny.<br>
+        Email : <a href="mailto:contact@trouvetavoie.fr">contact@trouvetavoie.fr</a></p>
+      </div>
+
+      <div class="legal-block">
+        <h3>H&eacute;bergement</h3>
+        <p>Ce site est h&eacute;berg&eacute; par Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, &Eacute;tats-Unis.<br>
+        Site : <a href="https://vercel.com" target="_blank">vercel.com</a></p>
+      </div>
+
+      <div class="legal-block">
+        <h3>Propri&eacute;t&eacute; intellectuelle</h3>
+        <p>L'ensemble du contenu de ce site (textes, graphismes, design, logo) est la propri&eacute;t&eacute; exclusive de Trouve ta Voie, sauf mention contraire. Toute reproduction est interdite sans autorisation pr&eacute;alable.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3>Donn&eacute;es personnelles & RGPD</h3>
+        <p>Trouve ta Voie collecte des donn&eacute;es uniquement dans le cadre du questionnaire d'orientation et de la liste d'attente (adresse email). Ces donn&eacute;es sont trait&eacute;es de mani&egrave;re anonyme et ne sont jamais revendues &agrave; des tiers. Les r&eacute;ponses au questionnaire sont envoy&eacute;es &agrave; l'API Anthropic (Claude) pour g&eacute;n&eacute;rer les r&eacute;sultats personnalis&eacute;s et ne sont pas stock&eacute;es apr&egrave;s traitement.</p>
+        <p>Conform&eacute;ment au R&egrave;glement G&eacute;n&eacute;ral sur la Protection des Donn&eacute;es (RGPD), tu disposes d'un droit d'acc&egrave;s, de modification et de suppression de tes donn&eacute;es. Pour exercer ce droit, contacte-nous &agrave; <a href="mailto:contact@trouvetavoie.fr">contact@trouvetavoie.fr</a>.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3>Cookies</h3>
+        <p>Ce site n'utilise aucun cookie de tracking. Aucune donn&eacute;e de navigation n'est collect&eacute;e &agrave; des fins publicitaires.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3>Liens d'affiliation</h3>
+        <p>Certains liens vers des formations ou des ressources externes peuvent &ecirc;tre des liens d'affiliation. Cela signifie que Trouve ta Voie peut percevoir une commission si tu t'inscris via ces liens, sans co&ucirc;t suppl&eacute;mentaire pour toi. Nous ne recommandons que des formations et ressources que nous jugeons de qualit&eacute;.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3>Limitation de responsabilit&eacute;</h3>
+        <p>Les r&eacute;sultats g&eacute;n&eacute;r&eacute;s par l'IA sont des suggestions &agrave; titre indicatif. Ils ne constituent ni un conseil professionnel certifi&eacute;, ni un engagement de r&eacute;sultat. Trouve ta Voie d&eacute;cline toute responsabilit&eacute; quant aux d&eacute;cisions prises sur la base de ces suggestions.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Trouve<span>ta</span>Voie</div>
+      <ul class="footer-links">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="questionnaire.html">Faire le test</a></li>
+        <li><a href="formations.html">Formations</a></li>
+        <li><a href="mailto:contact@trouvetavoie.fr">Contact</a></li>
+      </ul>
+    </div>
+    <p class="footer-copy">&copy; 2025 Trouve ta Voie. Fait avec &#10084;&#65039; pour ceux qui cherchent leur chemin.</p>
+  </div>
+</footer>
+</body>
+</html>

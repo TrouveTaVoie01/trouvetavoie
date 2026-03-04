@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trouve ta Voie — Tes Résultats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #06060f;
+  --bg-card: #0c0c1d;
+  --bg-card-hover: #111128;
+  --purple-primary: #7c3aed;
+  --purple-light: #a78bfa;
+  --purple-glow: #8b5cf6;
+  --blue-accent: #3b82f6;
+  --cyan-accent: #06b6d4;
+  --text-primary: #f1f0ff;
+  --text-secondary: #a5a3c7;
+  --text-muted: #6b6991;
+  --gradient-hero: linear-gradient(135deg, #7c3aed 0%, #3b82f6 50%, #06b6d4 100%);
+  --venn-love: #f472b6;
+  --venn-talent: #a78bfa;
+  --venn-money: #60a5fa;
+  --border-subtle: rgba(124, 58, 237, 0.08);
+  --border-light: rgba(124, 58, 237, 0.15);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-deep); color: var(--text-primary);
+  font-family: 'Outfit', sans-serif; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased; min-height: 100vh;
+}
+
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 128px;
+}
+.ambient-glow-1 {
+  position: fixed; top: -20%; left: -15%; width: 50%; height: 60%;
+  background: radial-gradient(ellipse, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ambient-glow-2 {
+  position: fixed; bottom: -20%; right: -10%; width: 45%; height: 55%;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.highlight {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* Navbar */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6, 6, 15, 0.8);
+  backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle);
+}
+.logo {
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.3rem;
+  letter-spacing: -0.03em; background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  text-decoration: none;
+}
+.logo span {
+  font-weight: 400; -webkit-text-fill-color: var(--cyan-accent);
+  font-style: italic; margin: 0 0.08em;
+}
+.nav-back {
+  color: var(--text-muted); font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-back:hover { color: var(--text-secondary); }
+
+/* Page */
+.results-page {
+  max-width: 900px; margin: 0 auto; padding: 6rem 1.5rem 4rem; position: relative; z-index: 2;
+}
+
+/* ===== REVEAL HEADER ===== */
+.results-header {
+  text-align: center; margin-bottom: 3rem;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(35px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.results-header .confetti { font-size: 2rem; margin-bottom: 0.75rem; }
+.results-header h1 {
+  font-family: 'Sora', sans-serif; font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; margin-bottom: 0.75rem;
+}
+.results-header p {
+  font-size: 1rem; color: var(--text-secondary); line-height: 1.65; max-width: 550px; margin: 0 auto;
+}
+
+/* ===== PROFIL SUMMARY ===== */
+.profil-card {
+  padding: 2rem; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, rgba(59, 130, 246, 0.04) 100%);
+  border: 1px solid var(--border-light); margin-bottom: 3rem; text-align: center;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; opacity: 0;
+}
+.profil-card .zone-label {
+  font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem;
+}
+.profil-card .zone-text {
+  font-size: 1.2rem; font-weight: 600; line-height: 1.45; margin-bottom: 1rem;
+}
+.profil-card .profil-text {
+  font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7;
+}
+
+/* ===== VENN DIAGRAM PERSONALIZED ===== */
+.venn-result {
+  display: flex; justify-content: center; margin-bottom: 3.5rem;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0;
+}
+.venn-wrap { position: relative; width: 380px; height: 380px; }
+.venn-wrap .vr-glow {
+  position: absolute; inset: -20px; border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.08) 0%, transparent 65%);
+  filter: blur(25px);
+}
+.vr-circle {
+  position: absolute; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 1.5rem; transition: all 0.4s;
+}
+.vr-love {
+  width: 200px; height: 200px; top: 10px; left: 50%; transform: translateX(-50%);
+  background: radial-gradient(circle at 40% 40%, rgba(244, 114, 182, 0.15) 0%, rgba(244, 114, 182, 0.03) 70%);
+  border: 1.5px solid rgba(244, 114, 182, 0.25);
+}
+.vr-talent {
+  width: 200px; height: 200px; bottom: 20px; left: 15px;
+  background: radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.15) 0%, rgba(124, 58, 237, 0.03) 70%);
+  border: 1.5px solid rgba(124, 58, 237, 0.25);
+}
+.vr-money {
+  width: 200px; height: 200px; bottom: 20px; right: 15px;
+  background: radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.03) 70%);
+  border: 1.5px solid rgba(59, 130, 246, 0.25);
+}
+.vr-circle .vr-title {
+  font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 600;
+  margin-bottom: 0.4rem; letter-spacing: 0.02em;
+}
+.vr-love .vr-title { color: var(--venn-love); }
+.vr-talent .vr-title { color: var(--venn-talent); }
+.vr-money .vr-title { color: var(--venn-money); }
+.vr-circle .vr-items {
+  font-size: 0.68rem; color: var(--text-muted); line-height: 1.5;
+}
+
+.vr-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -48%);
+  z-index: 10; text-align: center;
+}
+.vr-center-glow {
+  position: absolute; inset: -25px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, rgba(59, 130, 246, 0.15) 40%, transparent 70%);
+  filter: blur(12px); animation: cPulse 3s ease-in-out infinite;
+}
+@keyframes cPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.15); } }
+.vr-center-label {
+  position: relative; z-index: 2; font-family: 'Sora', sans-serif;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.vr-center-icon { position: relative; z-index: 2; font-size: 1.2rem; margin-bottom: 0.1rem; }
+
+/* ===== IDEAS CARDS ===== */
+.ideas-section { margin-bottom: 3rem; }
+.ideas-section h2 {
+  font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800;
+  text-align: center; margin-bottom: 2rem; letter-spacing: -0.02em;
+}
+.ideas-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.idea-card {
+  padding: 2rem 2.25rem; border-radius: 20px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  transition: all 0.4s; position: relative; overflow: hidden;
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0;
+}
+.idea-card:nth-child(1) { animation-delay: 0.5s; }
+.idea-card:nth-child(2) { animation-delay: 0.7s; }
+.idea-card:nth-child(3) { animation-delay: 0.9s; }
+.idea-card:hover { border-color: var(--border-light); transform: translateY(-3px); }
+.idea-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  border-radius: 4px;
+}
+.idea-card:nth-child(1)::before { background: var(--venn-love); }
+.idea-card:nth-child(2)::before { background: var(--venn-talent); }
+.idea-card:nth-child(3)::before { background: var(--venn-money); }
+
+.idea-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.idea-number {
+  font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem;
+}
+.idea-card:nth-child(1) .idea-number { color: var(--venn-love); }
+.idea-card:nth-child(2) .idea-number { color: var(--venn-talent); }
+.idea-card:nth-child(3) .idea-number { color: var(--venn-money); }
+.idea-title {
+  font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 700;
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+.idea-type {
+  flex-shrink: 0; padding: 0.3rem 0.75rem; border-radius: 50px;
+  font-size: 0.72rem; font-weight: 500; border: 1px solid var(--border-light);
+  color: var(--text-muted); text-transform: capitalize;
+}
+.idea-desc { font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.25rem; }
+
+.idea-details { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.idea-detail {
+  padding: 0.85rem 1rem; border-radius: 12px;
+  background: rgba(124, 58, 237, 0.04); border: 1px solid var(--border-subtle);
+}
+.idea-detail-label {
+  font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;
+}
+.idea-detail-text { font-size: 0.85rem; line-height: 1.55; color: var(--text-secondary); }
+
+/* ===== CTA BOTTOM ===== */
+.results-cta {
+  text-align: center; padding: 3rem 2rem; border-radius: 24px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, rgba(6, 182, 212, 0.04) 100%);
+  border: 1px solid var(--border-light); margin-bottom: 2rem;
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards; opacity: 0;
+}
+.results-cta h3 {
+  font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem;
+}
+.results-cta p { font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6; }
+.cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.9rem 1.75rem; border-radius: 60px;
+  background: var(--gradient-hero); color: white;
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all 0.35s; box-shadow: 0 0 25px rgba(124, 58, 237, 0.25);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(124, 58, 237, 0.4); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.9rem 1.75rem; border-radius: 60px;
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500;
+  text-decoration: none; border: 1px solid var(--border-light); cursor: pointer;
+  transition: all 0.35s;
+}
+.btn-outline:hover { border-color: var(--purple-primary); color: var(--text-primary); background: rgba(124, 58, 237, 0.05); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 4rem 2rem;
+}
+.empty-state h2 { font-family: 'Sora', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; }
+.empty-state p { color: var(--text-secondary); margin-bottom: 2rem; }
+
+/* Venn progressive animation */
+.vr-circle { opacity: 0; transform: scale(0.6); }
+.vr-love.animate { animation: vennReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+.vr-talent.animate { animation: vennReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards; }
+.vr-money.animate { animation: vennReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards; }
+.vr-center { opacity: 0; }
+.vr-center.animate { animation: centerReveal 1s cubic-bezier(0.16,1,0.3,1) 1.4s forwards; }
+@keyframes vennReveal { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes centerReveal { 0% { opacity: 0; transform: translate(-50%,-48%) scale(0.3); } 60% { transform: translate(-50%,-48%) scale(1.15); } 100% { opacity: 1; transform: translate(-50%,-48%) scale(1); } }
+
+/* Challenge friend button */
+.viral-section { text-align: center; margin-bottom: 3rem; animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 1s forwards; opacity: 0; }
+.viral-section h3 { font-family: 'Sora', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+.viral-section p { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.25rem; }
+.viral-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.btn-viral {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.5rem; border-radius: 50px;
+  font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.3s;
+}
+.btn-viral-primary { background: var(--gradient-hero); color: white; box-shadow: 0 0 20px rgba(124,58,237,0.2); }
+.btn-viral-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(124,58,237,0.35); }
+.btn-viral-whatsapp { background: rgba(37,211,102,0.12); color: #25d366; border: 1px solid rgba(37,211,102,0.25); }
+.btn-viral-whatsapp:hover { background: rgba(37,211,102,0.2); transform: translateY(-2px); }
+.btn-viral-twitter { background: rgba(29,155,240,0.12); color: #1d9bf0; border: 1px solid rgba(29,155,240,0.25); }
+.btn-viral-twitter:hover { background: rgba(29,155,240,0.2); transform: translateY(-2px); }
+.btn-viral-copy { background: rgba(124,58,237,0.08); color: var(--purple-light); border: 1px solid var(--border-light); }
+.btn-viral-copy:hover { background: rgba(124,58,237,0.15); transform: translateY(-2px); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .results-page { padding: 5.5rem 1rem 3rem; }
+  .venn-wrap { width: 300px; height: 300px; }
+  .vr-circle { width: 160px; height: 160px; padding: 1rem; }
+  .idea-details { grid-template-columns: 1fr; }
+  .idea-card { padding: 1.5rem; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .profil-card { padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<nav>
+  <a href="index.html" class="logo">Trouve<span>ta</span>Voie</a>
+  <a href="questionnaire.html" class="nav-back">&#8592; Refaire le test</a>
+</nav>
+
+<main class="results-page" id="resultsPage">
+  <!-- Content will be injected by JS -->
+  <div class="empty-state" id="emptyState">
+    <h2>&#128566; Aucun r&eacute;sultat trouv&eacute;</h2>
+    <p>On dirait que tu n'as pas encore fait le test. Commence par r&eacute;pondre au questionnaire !</p>
+    <a href="questionnaire.html" class="btn-primary">Faire le test &rarr;</a>
+  </div>
+</main>
+
+<script>
+// ========== PLAN D : SAUVEGARDE RÉPONSES ==========
+// Si l'utilisateur arrive ici et les données sont corrompues,
+// on vérifie s'il y a une sauvegarde dans sessionStorage
+function saveBackup(data) {
+  try { sessionStorage.setItem('ttv_backup', JSON.stringify(data)); } catch(e) {}
+}
+function getBackup() {
+  try { const b = sessionStorage.getItem('ttv_backup'); return b ? JSON.parse(b) : null; } catch(e) { return null; }
+}
+
+// ========== PLAN C : PARSING ULTRA-ROBUSTE ==========
+function getResultsData() {
+  const params = new URLSearchParams(window.location.search);
+  const dataStr = params.get('data');
+  if (!dataStr) return getBackup(); // Plan D — essayer la sauvegarde
+
+  try {
+    const data = JSON.parse(decodeURIComponent(dataStr));
+    saveBackup(data); // Sauvegarder pour le Plan D
+    return data;
+  } catch (e) {
+    console.error('Parse error, trying backup:', e);
+    return getBackup();
+  }
+}
+
+// Nettoyer les données — remplace les valeurs manquantes par des défauts
+function sanitizeResults(results) {
+  return {
+    profil_resume: results.profil_resume || "Ton profil est unique et plein de potentiel.",
+    zone_de_valeur: results.zone_de_valeur || "L'intersection de tes passions, talents et du marché ouvre des voies prometteuses.",
+    passions_cles: (results.passions_cles && results.passions_cles.length > 0) ? results.passions_cles : ["Curiosité", "Créativité", "Motivation"],
+    talents_cles: (results.talents_cles && results.talents_cles.length > 0) ? results.talents_cles : ["Adaptabilité", "Communication", "Organisation"],
+    marche_cles: (results.marche_cles && results.marche_cles.length > 0) ? results.marche_cles : ["Digital", "Freelance", "Innovation"],
+    idees: (results.idees && results.idees.length > 0) ? results.idees.map(idee => ({
+      titre: idee.titre || "Idée à explorer",
+      description: idee.description || "Une piste prometteuse à creuser.",
+      pourquoi_toi: idee.pourquoi_toi || "Ton profil s'y prête naturellement.",
+      premier_pas: idee.premier_pas || "Fais une recherche sur ce domaine et contacte 3 personnes qui le font déjà.",
+      potentiel_revenus: idee.potentiel_revenus || "Variable selon ton investissement",
+      type: idee.type || "projet"
+    })) : [
+      { titre: "Explore le freelance dans ta compétence principale", description: "Propose tes services sur Malt ou Fiverr.", pourquoi_toi: "Tu as des compétences que d'autres recherchent.", premier_pas: "Crée ton profil sur Malt.fr aujourd'hui.", potentiel_revenus: "1 000-4 000€/mois", type: "business" },
+      { titre: "Lance un média sur ta passion", description: "Crée du contenu éducatif sur TikTok ou YouTube.", pourquoi_toi: "Ta curiosité est un atout pour créer du contenu.", premier_pas: "Publie ta première vidéo aujourd'hui.", potentiel_revenus: "500-5 000€/mois à terme", type: "projet" },
+      { titre: "Deviens assistant virtuel spécialisé", description: "Aide des entrepreneurs à gérer leur quotidien.", pourquoi_toi: "Ton organisation est un vrai talent.", premier_pas: "Inscris-toi sur une plateforme freelance.", potentiel_revenus: "1 500-3 500€/mois", type: "metier" }
+    ],
+    is_fallback: results.is_fallback || false
+  };
+}
+
+function renderResults(data) {
+  try {
+    const results = sanitizeResults(data.results);
+    const page = document.getElementById('resultsPage');
+    document.getElementById('emptyState').style.display = 'none';
+
+    // Banner si résultats de secours
+    const fallbackBanner = results.is_fallback
+      ? '<div style="text-align:center;padding:1rem;margin-bottom:1.5rem;border-radius:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);color:#fbbf24;font-size:0.85rem;">&#9888; L\'IA était occupée, ces résultats sont basés sur un matching local. <a href="questionnaire.html" style="color:#fbbf24;text-decoration:underline;">Refaire le test</a> pour des idées 100% personnalisées.</div>'
+      : '';
+
+    const html = `
+      ${fallbackBanner}
+      <div class="results-header">
+        <div class="confetti">&#127881;</div>
+        <h1>Voici <span class="highlight">ta voie</span></h1>
+        <p>On a analys&eacute; tes passions, tes talents et le march&eacute;. Voici ce qu'on a trouv&eacute; &agrave; leur intersection.</p>
+      </div>
+
+      <div class="profil-card">
+        <div class="zone-label highlight">&#10024; Ta zone de valeur</div>
+        <div class="zone-text">${results.zone_de_valeur}</div>
+        <div class="profil-text">${results.profil_resume}</div>
+      </div>
+
+      <div class="venn-result">
+        <div class="venn-wrap" id="vennAnimated">
+          <div class="vr-glow"></div>
+          <div class="vr-circle vr-love">
+            <div class="vr-title">&#9825; Passions</div>
+            <div class="vr-items">${results.passions_cles.join('<br>')}</div>
+          </div>
+          <div class="vr-circle vr-talent">
+            <div class="vr-title">&#10022; Talents</div>
+            <div class="vr-items">${results.talents_cles.join('<br>')}</div>
+          </div>
+          <div class="vr-circle vr-money">
+            <div class="vr-title">&#9672; March&eacute;</div>
+            <div class="vr-items">${results.marche_cles.join('<br>')}</div>
+          </div>
+          <div class="vr-center">
+            <div class="vr-center-glow"></div>
+            <div class="vr-center-icon">&#10023;</div>
+            <div class="vr-center-label">Ta voie</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ideas-section">
+        <h2>Tes <span class="highlight">3 id&eacute;es</span> sur mesure</h2>
+        <div class="ideas-grid">
+          ${results.idees.map((idee, i) => `
+            <div class="idea-card">
+              <div class="idea-header">
+                <div>
+                  <div class="idea-number">Id&eacute;e ${i + 1}</div>
+                  <div class="idea-title">${idee.titre}</div>
+                </div>
+                <span class="idea-type">${idee.type || 'projet'}</span>
+              </div>
+              <div class="idea-desc">${idee.description}</div>
+              <div class="idea-details">
+                <div class="idea-detail">
+                  <div class="idea-detail-label">&#127919; Pourquoi toi</div>
+                  <div class="idea-detail-text">${idee.pourquoi_toi}</div>
+                </div>
+                <div class="idea-detail">
+                  <div class="idea-detail-label">&#128640; Premier pas</div>
+                  <div class="idea-detail-text">${idee.premier_pas}</div>
+                </div>
+                <div class="idea-detail">
+                  <div class="idea-detail-label">&#128176; Potentiel revenus</div>
+                  <div class="idea-detail-text">${idee.potentiel_revenus}</div>
+                </div>
+                <div class="idea-detail">
+                  <div class="idea-detail-label">&#127891; Type</div>
+                  <div class="idea-detail-text" style="text-transform:capitalize;">${idee.type || 'Projet'}</div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="results-cta">
+        <h3>&#128640; Pr&ecirc;t &agrave; passer &agrave; l'action ?</h3>
+        <p>Tu as tes id&eacute;es. Maintenant, d&eacute;couvre les formations et ressources adapt&eacute;es &agrave; chaque piste pour concr&eacute;tiser.</p>
+        <div class="cta-buttons">
+          <a href="formations.html" class="btn-primary">Voir les formations &#127891;</a>
+          <a href="questionnaire.html" class="btn-outline">&#x21BB; Refaire le test</a>
+        </div>
+      </div>
+
+      <div class="viral-section">
+        <h3>&#128293; D&eacute;fie un ami</h3>
+        <p>Toi t'as trouv&eacute; ta voie. Et tes potes, ils en sont o&ugrave; ? Envoie-leur le test.</p>
+        <div class="viral-buttons">
+          <button class="btn-viral btn-viral-whatsapp" onclick="shareWhatsApp()">WhatsApp</button>
+          <button class="btn-viral btn-viral-twitter" onclick="shareTwitter()">Twitter / X</button>
+          <button class="btn-viral btn-viral-copy" onclick="copyLink()">&#128279; Copier le lien</button>
+        </div>
+      </div>
+    `;
+    page.innerHTML = html;
+
+    // Trigger Venn animation
+    setTimeout(() => {
+      const venn = document.getElementById('vennAnimated');
+      if (venn) {
+        venn.querySelectorAll('.vr-circle').forEach(c => c.classList.add('animate'));
+        const center = venn.querySelector('.vr-center');
+        if (center) center.classList.add('animate');
+      }
+    }, 500);
+
+  } catch (renderErr) {
+    // PLAN C ULTIME : même si le render crash, on affiche quelque chose
+    console.error('Render crash, fallback display:', renderErr);
+    const page = document.getElementById('resultsPage');
+    document.getElementById('emptyState').style.display = 'none';
+    page.innerHTML = `
+      <div class="results-header">
+        <div class="confetti">&#128170;</div>
+        <h1>On a un petit <span class="highlight">souci technique</span></h1>
+        <p>Tes r&eacute;ponses ont bien &eacute;t&eacute; re&ccedil;ues mais quelque chose a bug&eacute; &agrave; l'affichage. Pas de panique !</p>
+      </div>
+      <div style="text-align:center;margin:2rem 0;">
+        <a href="questionnaire.html" class="btn-primary" style="display:inline-flex;">Refaire le test (tes r&eacute;ponses sont sauv&eacute;es) &#10148;</a>
+        <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-muted);">Si le probl&egrave;me persiste, contacte-nous : contact@trouvetavoie.fr</p>
+      </div>
+    `;
+  }
+}
+
+// Viral sharing
+const siteUrl = window.location.origin || 'https://trouvetavoie.fr';
+const shareText = "Je viens de d\u00e9couvrir ma voie gr\u00e2ce \u00e0 l'IA \ud83d\ude80 Fais le test toi aussi, c'est gratuit !";
+
+function shareWhatsApp() {
+  window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + siteUrl), '_blank');
+}
+function shareTwitter() {
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent(siteUrl), '_blank');
+}
+function copyLink() {
+  navigator.clipboard.writeText(siteUrl).then(() => {
+    const btn = document.querySelector('.btn-viral-copy');
+    if (!btn) return;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '&#10003; Lien copi&eacute; !';
+    btn.style.color = '#34d399';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2500);
+  }).catch(() => {});
+}
+
+// ========== INIT ==========
+try {
+  const data = getResultsData();
+  if (data && data.results) { renderResults(data); }
+  else { document.getElementById('emptyState').style.display = 'block'; }
+} catch (initErr) {
+  // Même le init ne peut pas crasher
+  console.error('Init error:', initErr);
+  document.getElementById('emptyState').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
