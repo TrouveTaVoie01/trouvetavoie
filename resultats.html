@@ -320,6 +320,81 @@ nav {
   </div>
 </main>
 
+<!-- Email capture modal -->
+<div class="email-modal-overlay" id="emailModal">
+  <div class="email-modal">
+    <button class="modal-close" onclick="closeEmailModal()">&times;</button>
+    <div class="modal-icon">&#127891;</div>
+    <h3 class="modal-title">Re&ccedil;ois tes formations personnalis&eacute;es</h3>
+    <p class="modal-desc">Entre ton email pour acc&eacute;der aux formations et ressources s&eacute;lectionn&eacute;es par l'IA pour ta voie. On t'enverra aussi ton plan d'action.</p>
+    <div class="modal-form">
+      <input type="email" class="modal-input" id="modalEmail" placeholder="ton@email.com" required>
+      <button class="modal-submit" id="modalSubmit" onclick="submitEmail()">Acc&eacute;der aux formations &rarr;</button>
+    </div>
+    <p class="modal-note">Pas de spam. Juste tes formations + un plan d'action. Promis.</p>
+    <button class="modal-skip" onclick="skipEmail()">Continuer sans email &rarr;</button>
+  </div>
+</div>
+
+<style>
+.email-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(6, 6, 15, 0.85); backdrop-filter: blur(12px);
+  align-items: center; justify-content: center;
+}
+.email-modal-overlay.show { display: flex; }
+.email-modal {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: 24px; padding: 2.5rem; max-width: 440px; width: 90%;
+  text-align: center; position: relative;
+  animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-close {
+  position: absolute; top: 1rem; right: 1rem; background: none;
+  border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: var(--text-primary); }
+.modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.modal-title {
+  font-family: 'Sora', sans-serif; font-size: 1.25rem; font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+.modal-desc {
+  font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+.modal-form { display: flex; flex-direction: column; gap: 0.75rem; }
+.modal-input {
+  padding: 0.85rem 1.1rem; border-radius: 14px;
+  border: 1px solid var(--border-light); background: rgba(124, 58, 237, 0.04);
+  color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 0.95rem;
+  outline: none; transition: border-color 0.3s;
+}
+.modal-input:focus { border-color: var(--purple-primary); }
+.modal-input::placeholder { color: var(--text-muted); }
+.modal-submit {
+  padding: 0.9rem; border-radius: 14px; border: none;
+  background: var(--gradient-hero); color: white;
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; transition: all 0.35s;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.25);
+}
+.modal-submit:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(124, 58, 237, 0.4); }
+.modal-note {
+  font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem;
+}
+.modal-skip {
+  display: inline-block; margin-top: 1rem; background: none; border: none;
+  color: var(--text-muted); font-size: 0.82rem; cursor: pointer;
+  text-decoration: underline; transition: color 0.2s;
+}
+.modal-skip:hover { color: var(--text-secondary); }
+@media (max-width: 500px) {
+  .email-modal { padding: 2rem 1.5rem; }
+}
+</style>
+
 <script>
 // Parse data from URL
 function getResultsData() {
@@ -340,21 +415,16 @@ function renderResults(data) {
   document.getElementById('emptyState').style.display = 'none';
 
   const html = `
-    <!-- Header -->
     <div class="results-header">
       <div class="confetti">&#127881;</div>
       <h1>Voici <span class="highlight">ta voie</span></h1>
       <p>On a analys&eacute; tes passions, tes talents et le march&eacute;. Voici ce qu'on a trouv&eacute; &agrave; l'intersection.</p>
     </div>
-
-    <!-- Profil summary -->
     <div class="profil-card">
       <div class="zone-label highlight">&#10024; Ta zone de valeur</div>
       <div class="zone-text">${results.zone_de_valeur || ''}</div>
       <div class="profil-text">${results.profil_resume || ''}</div>
     </div>
-
-    <!-- Venn diagram -->
     <div class="venn-result">
       <div class="venn-wrap">
         <div class="vr-glow"></div>
@@ -377,8 +447,6 @@ function renderResults(data) {
         </div>
       </div>
     </div>
-
-    <!-- Ideas -->
     <div class="ideas-section">
       <h2>Tes <span class="highlight">3 id&eacute;es</span> sur mesure</h2>
       <div class="ideas-grid">
@@ -415,27 +483,37 @@ function renderResults(data) {
         `).join('')}
       </div>
     </div>
-
-    <!-- CTA -->
     <div class="results-cta">
       <h3>&#128640; Pr&ecirc;t &agrave; passer &agrave; l'action ?</h3>
-      <p>Tu as tes id&eacute;es. Maintenant, il faut concr&eacute;tiser. On pr&eacute;pare des formations et des ressources adapt&eacute;es &agrave; chaque id&eacute;e. Bient&ocirc;t disponible.</p>
+      <p>Choisis une id&eacute;e ci-dessus pour d&eacute;couvrir les formations adapt&eacute;es. Ou partage tes r&eacute;sultats avec tes proches.</p>
       <div class="cta-buttons">
         <button class="btn-primary" onclick="shareResults()">Partage ton r&eacute;sultat &#10148;</button>
         <a href="questionnaire.html" class="btn-outline">&#x21BB; Refaire le test</a>
       </div>
     </div>
   `;
-
   page.innerHTML = html;
 }
 
-// Choose an idea and go to formations
+// Store the selected idea index
+let selectedIdeaIndex = null;
+
 function chooseIdea(index) {
+  selectedIdeaIndex = index;
+  document.getElementById('emailModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEmailModal() {
+  document.getElementById('emailModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function goToFormations() {
   const data = getResultsData();
   if (!data || !data.results || !data.results.idees) return;
   
-  const idee = data.results.idees[index];
+  const idee = data.results.idees[selectedIdeaIndex];
   const payload = {
     idee: idee,
     profil: data.results.profil_resume || '',
@@ -446,17 +524,44 @@ function chooseIdea(index) {
   window.location.href = 'formations.html?data=' + encoded;
 }
 
+function submitEmail() {
+  const email = document.getElementById('modalEmail').value;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  if (!emailRegex.test(email)) {
+    document.getElementById('modalEmail').style.borderColor = 'rgba(239, 68, 68, 0.5)';
+    setTimeout(() => {
+      document.getElementById('modalEmail').style.borderColor = '';
+    }, 2000);
+    return;
+  }
+  
+  // Store email for later (Brevo integration)
+  console.log('Email captured:', email);
+  
+  // Save to localStorage for now
+  const emails = JSON.parse(localStorage.getItem('ttv_emails') || '[]');
+  emails.push({ email: email, date: new Date().toISOString(), idea: selectedIdeaIndex });
+  localStorage.setItem('ttv_emails', JSON.stringify(emails));
+  
+  // Redirect to formations
+  goToFormations();
+}
+
+function skipEmail() {
+  goToFormations();
+}
+
 // Share feature
 function shareResults() {
-  const text = "Je viens de trouver ma voie gr\\u00e2ce \\u00e0 l'IA ! \\ud83d\\ude80 D\\u00e9couvre la tienne sur Trouve ta Voie";
+  const text = "Je viens de trouver ma voie gr\u00e2ce \u00e0 l'IA ! \ud83d\ude80 D\u00e9couvre la tienne sur Trouve ta Voie";
   if (navigator.share) {
     navigator.share({ title: 'Trouve ta Voie', text: text, url: window.location.origin });
   } else {
-    // Fallback: copy to clipboard
-    navigator.clipboard.writeText(text + ' — ' + window.location.origin).then(() => {
+    navigator.clipboard.writeText(text + ' \u2014 ' + window.location.origin).then(() => {
       const btn = document.querySelector('.results-cta .btn-primary');
       const orig = btn.innerHTML;
-      btn.innerHTML = '&#10003; Copi&eacute; !';
+      btn.innerHTML = '\u2713 Copi\u00e9 !';
       setTimeout(() => btn.innerHTML = orig, 2000);
     });
   }
