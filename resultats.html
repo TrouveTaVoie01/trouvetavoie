@@ -235,6 +235,21 @@ nav {
 }
 .idea-detail-text { font-size: 0.85rem; line-height: 1.55; color: var(--text-secondary); }
 
+/* Choose button */
+.btn-choose {
+  display: block; width: 100%; margin-top: 1.5rem; padding: 0.9rem 1.5rem;
+  border-radius: 14px; border: 1px solid var(--border-light);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.06) 100%);
+  color: var(--text-primary); font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  transition: all 0.35s; letter-spacing: 0.01em;
+}
+.btn-choose:hover {
+  background: var(--gradient-hero); color: white;
+  border-color: transparent; transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+}
+
 /* ===== CTA BOTTOM ===== */
 .results-cta {
   text-align: center; padding: 3rem 2rem; border-radius: 24px;
@@ -273,36 +288,6 @@ nav {
 .empty-state h2 { font-family: 'Sora', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; }
 .empty-state p { color: var(--text-secondary); margin-bottom: 2rem; }
 
-/* Venn progressive animation */
-.vr-circle { opacity: 0; transform: scale(0.6); }
-.vr-love.animate { animation: vennReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
-.vr-talent.animate { animation: vennReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards; }
-.vr-money.animate { animation: vennReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards; }
-.vr-center { opacity: 0; }
-.vr-center.animate { animation: centerReveal 1s cubic-bezier(0.16,1,0.3,1) 1.4s forwards; }
-@keyframes vennReveal { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
-@keyframes centerReveal { 0% { opacity: 0; transform: translate(-50%,-48%) scale(0.3); } 60% { transform: translate(-50%,-48%) scale(1.15); } 100% { opacity: 1; transform: translate(-50%,-48%) scale(1); } }
-
-/* Challenge friend button */
-.viral-section { text-align: center; margin-bottom: 3rem; animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 1s forwards; opacity: 0; }
-.viral-section h3 { font-family: 'Sora', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
-.viral-section p { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.25rem; }
-.viral-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-.btn-viral {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.75rem 1.5rem; border-radius: 50px;
-  font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600;
-  border: none; cursor: pointer; transition: all 0.3s;
-}
-.btn-viral-primary { background: var(--gradient-hero); color: white; box-shadow: 0 0 20px rgba(124,58,237,0.2); }
-.btn-viral-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(124,58,237,0.35); }
-.btn-viral-whatsapp { background: rgba(37,211,102,0.12); color: #25d366; border: 1px solid rgba(37,211,102,0.25); }
-.btn-viral-whatsapp:hover { background: rgba(37,211,102,0.2); transform: translateY(-2px); }
-.btn-viral-twitter { background: rgba(29,155,240,0.12); color: #1d9bf0; border: 1px solid rgba(29,155,240,0.25); }
-.btn-viral-twitter:hover { background: rgba(29,155,240,0.2); transform: translateY(-2px); }
-.btn-viral-copy { background: rgba(124,58,237,0.08); color: var(--purple-light); border: 1px solid var(--border-light); }
-.btn-viral-copy:hover { background: rgba(124,58,237,0.15); transform: translateY(-2px); }
-
 /* Responsive */
 @media (max-width: 600px) {
   .results-page { padding: 5.5rem 1rem 3rem; }
@@ -336,219 +321,152 @@ nav {
 </main>
 
 <script>
-// ========== PLAN D : SAUVEGARDE RÉPONSES ==========
-// Si l'utilisateur arrive ici et les données sont corrompues,
-// on vérifie s'il y a une sauvegarde dans sessionStorage
-function saveBackup(data) {
-  try { sessionStorage.setItem('ttv_backup', JSON.stringify(data)); } catch(e) {}
-}
-function getBackup() {
-  try { const b = sessionStorage.getItem('ttv_backup'); return b ? JSON.parse(b) : null; } catch(e) { return null; }
-}
-
-// ========== PLAN C : PARSING ULTRA-ROBUSTE ==========
+// Parse data from URL
 function getResultsData() {
   const params = new URLSearchParams(window.location.search);
   const dataStr = params.get('data');
-  if (!dataStr) return getBackup(); // Plan D — essayer la sauvegarde
-
+  if (!dataStr) return null;
   try {
-    const data = JSON.parse(decodeURIComponent(dataStr));
-    saveBackup(data); // Sauvegarder pour le Plan D
-    return data;
+    return JSON.parse(decodeURIComponent(dataStr));
   } catch (e) {
-    console.error('Parse error, trying backup:', e);
-    return getBackup();
+    console.error('Failed to parse results data:', e);
+    return null;
   }
-}
-
-// Nettoyer les données — remplace les valeurs manquantes par des défauts
-function sanitizeResults(results) {
-  return {
-    profil_resume: results.profil_resume || "Ton profil est unique et plein de potentiel.",
-    zone_de_valeur: results.zone_de_valeur || "L'intersection de tes passions, talents et du marché ouvre des voies prometteuses.",
-    passions_cles: (results.passions_cles && results.passions_cles.length > 0) ? results.passions_cles : ["Curiosité", "Créativité", "Motivation"],
-    talents_cles: (results.talents_cles && results.talents_cles.length > 0) ? results.talents_cles : ["Adaptabilité", "Communication", "Organisation"],
-    marche_cles: (results.marche_cles && results.marche_cles.length > 0) ? results.marche_cles : ["Digital", "Freelance", "Innovation"],
-    idees: (results.idees && results.idees.length > 0) ? results.idees.map(idee => ({
-      titre: idee.titre || "Idée à explorer",
-      description: idee.description || "Une piste prometteuse à creuser.",
-      pourquoi_toi: idee.pourquoi_toi || "Ton profil s'y prête naturellement.",
-      premier_pas: idee.premier_pas || "Fais une recherche sur ce domaine et contacte 3 personnes qui le font déjà.",
-      potentiel_revenus: idee.potentiel_revenus || "Variable selon ton investissement",
-      type: idee.type || "projet"
-    })) : [
-      { titre: "Explore le freelance dans ta compétence principale", description: "Propose tes services sur Malt ou Fiverr.", pourquoi_toi: "Tu as des compétences que d'autres recherchent.", premier_pas: "Crée ton profil sur Malt.fr aujourd'hui.", potentiel_revenus: "1 000-4 000€/mois", type: "business" },
-      { titre: "Lance un média sur ta passion", description: "Crée du contenu éducatif sur TikTok ou YouTube.", pourquoi_toi: "Ta curiosité est un atout pour créer du contenu.", premier_pas: "Publie ta première vidéo aujourd'hui.", potentiel_revenus: "500-5 000€/mois à terme", type: "projet" },
-      { titre: "Deviens assistant virtuel spécialisé", description: "Aide des entrepreneurs à gérer leur quotidien.", pourquoi_toi: "Ton organisation est un vrai talent.", premier_pas: "Inscris-toi sur une plateforme freelance.", potentiel_revenus: "1 500-3 500€/mois", type: "metier" }
-    ],
-    is_fallback: results.is_fallback || false
-  };
 }
 
 function renderResults(data) {
-  try {
-    const results = sanitizeResults(data.results);
-    const page = document.getElementById('resultsPage');
-    document.getElementById('emptyState').style.display = 'none';
+  const { results, answers } = data;
+  const page = document.getElementById('resultsPage');
+  document.getElementById('emptyState').style.display = 'none';
 
-    // Banner si résultats de secours
-    const fallbackBanner = results.is_fallback
-      ? '<div style="text-align:center;padding:1rem;margin-bottom:1.5rem;border-radius:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);color:#fbbf24;font-size:0.85rem;">&#9888; L\'IA était occupée, ces résultats sont basés sur un matching local. <a href="questionnaire.html" style="color:#fbbf24;text-decoration:underline;">Refaire le test</a> pour des idées 100% personnalisées.</div>'
-      : '';
+  const html = `
+    <!-- Header -->
+    <div class="results-header">
+      <div class="confetti">&#127881;</div>
+      <h1>Voici <span class="highlight">ta voie</span></h1>
+      <p>On a analys&eacute; tes passions, tes talents et le march&eacute;. Voici ce qu'on a trouv&eacute; &agrave; l'intersection.</p>
+    </div>
 
-    const html = `
-      ${fallbackBanner}
-      <div class="results-header">
-        <div class="confetti">&#127881;</div>
-        <h1>Voici <span class="highlight">ta voie</span></h1>
-        <p>On a analys&eacute; tes passions, tes talents et le march&eacute;. Voici ce qu'on a trouv&eacute; &agrave; leur intersection.</p>
-      </div>
+    <!-- Profil summary -->
+    <div class="profil-card">
+      <div class="zone-label highlight">&#10024; Ta zone de valeur</div>
+      <div class="zone-text">${results.zone_de_valeur || ''}</div>
+      <div class="profil-text">${results.profil_resume || ''}</div>
+    </div>
 
-      <div class="profil-card">
-        <div class="zone-label highlight">&#10024; Ta zone de valeur</div>
-        <div class="zone-text">${results.zone_de_valeur}</div>
-        <div class="profil-text">${results.profil_resume}</div>
-      </div>
-
-      <div class="venn-result">
-        <div class="venn-wrap" id="vennAnimated">
-          <div class="vr-glow"></div>
-          <div class="vr-circle vr-love">
-            <div class="vr-title">&#9825; Passions</div>
-            <div class="vr-items">${results.passions_cles.join('<br>')}</div>
-          </div>
-          <div class="vr-circle vr-talent">
-            <div class="vr-title">&#10022; Talents</div>
-            <div class="vr-items">${results.talents_cles.join('<br>')}</div>
-          </div>
-          <div class="vr-circle vr-money">
-            <div class="vr-title">&#9672; March&eacute;</div>
-            <div class="vr-items">${results.marche_cles.join('<br>')}</div>
-          </div>
-          <div class="vr-center">
-            <div class="vr-center-glow"></div>
-            <div class="vr-center-icon">&#10023;</div>
-            <div class="vr-center-label">Ta voie</div>
-          </div>
+    <!-- Venn diagram -->
+    <div class="venn-result">
+      <div class="venn-wrap">
+        <div class="vr-glow"></div>
+        <div class="vr-circle vr-love">
+          <div class="vr-title">&#9825; Passions</div>
+          <div class="vr-items">${(results.passions_cles || []).join('<br>')}</div>
+        </div>
+        <div class="vr-circle vr-talent">
+          <div class="vr-title">&#10022; Talents</div>
+          <div class="vr-items">${(results.talents_cles || []).join('<br>')}</div>
+        </div>
+        <div class="vr-circle vr-money">
+          <div class="vr-title">&#9672; March&eacute;</div>
+          <div class="vr-items">${(results.marche_cles || []).join('<br>')}</div>
+        </div>
+        <div class="vr-center">
+          <div class="vr-center-glow"></div>
+          <div class="vr-center-icon">&#10023;</div>
+          <div class="vr-center-label">Ta voie</div>
         </div>
       </div>
+    </div>
 
-      <div class="ideas-section">
-        <h2>Tes <span class="highlight">3 id&eacute;es</span> sur mesure</h2>
-        <div class="ideas-grid">
-          ${results.idees.map((idee, i) => `
-            <div class="idea-card">
-              <div class="idea-header">
-                <div>
-                  <div class="idea-number">Id&eacute;e ${i + 1}</div>
-                  <div class="idea-title">${idee.titre}</div>
-                </div>
-                <span class="idea-type">${idee.type || 'projet'}</span>
+    <!-- Ideas -->
+    <div class="ideas-section">
+      <h2>Tes <span class="highlight">3 id&eacute;es</span> sur mesure</h2>
+      <div class="ideas-grid">
+        ${(results.idees || []).map((idee, i) => `
+          <div class="idea-card">
+            <div class="idea-header">
+              <div>
+                <div class="idea-number">Id&eacute;e ${i + 1}</div>
+                <div class="idea-title">${idee.titre}</div>
               </div>
-              <div class="idea-desc">${idee.description}</div>
-              <div class="idea-details">
-                <div class="idea-detail">
-                  <div class="idea-detail-label">&#127919; Pourquoi toi</div>
-                  <div class="idea-detail-text">${idee.pourquoi_toi}</div>
-                </div>
-                <div class="idea-detail">
-                  <div class="idea-detail-label">&#128640; Premier pas</div>
-                  <div class="idea-detail-text">${idee.premier_pas}</div>
-                </div>
-                <div class="idea-detail">
-                  <div class="idea-detail-label">&#128176; Potentiel revenus</div>
-                  <div class="idea-detail-text">${idee.potentiel_revenus}</div>
-                </div>
-                <div class="idea-detail">
-                  <div class="idea-detail-label">&#127891; Type</div>
-                  <div class="idea-detail-text" style="text-transform:capitalize;">${idee.type || 'Projet'}</div>
-                </div>
+              <span class="idea-type">${idee.type || 'projet'}</span>
+            </div>
+            <div class="idea-desc">${idee.description}</div>
+            <div class="idea-details">
+              <div class="idea-detail">
+                <div class="idea-detail-label">&#127919; Pourquoi toi</div>
+                <div class="idea-detail-text">${idee.pourquoi_toi}</div>
+              </div>
+              <div class="idea-detail">
+                <div class="idea-detail-label">&#128640; Premier pas</div>
+                <div class="idea-detail-text">${idee.premier_pas}</div>
+              </div>
+              <div class="idea-detail">
+                <div class="idea-detail-label">&#128176; Potentiel revenus</div>
+                <div class="idea-detail-text">${idee.potentiel_revenus}</div>
+              </div>
+              <div class="idea-detail">
+                <div class="idea-detail-label">&#127891; Type</div>
+                <div class="idea-detail-text" style="text-transform: capitalize;">${idee.type || 'Projet'}</div>
               </div>
             </div>
-          `).join('')}
-        </div>
+            <button class="btn-choose" onclick="chooseIdea(${i})">&#127891; Choisir cette voie &rarr;</button>
+          </div>
+        `).join('')}
       </div>
+    </div>
 
-      <div class="results-cta">
-        <h3>&#128640; Pr&ecirc;t &agrave; passer &agrave; l'action ?</h3>
-        <p>Tu as tes id&eacute;es. Maintenant, d&eacute;couvre les formations et ressources adapt&eacute;es &agrave; chaque piste pour concr&eacute;tiser.</p>
-        <div class="cta-buttons">
-          <a href="formations.html" class="btn-primary">Voir les formations &#127891;</a>
-          <a href="questionnaire.html" class="btn-outline">&#x21BB; Refaire le test</a>
-        </div>
+    <!-- CTA -->
+    <div class="results-cta">
+      <h3>&#128640; Pr&ecirc;t &agrave; passer &agrave; l'action ?</h3>
+      <p>Tu as tes id&eacute;es. Maintenant, il faut concr&eacute;tiser. On pr&eacute;pare des formations et des ressources adapt&eacute;es &agrave; chaque id&eacute;e. Bient&ocirc;t disponible.</p>
+      <div class="cta-buttons">
+        <button class="btn-primary" onclick="shareResults()">Partage ton r&eacute;sultat &#10148;</button>
+        <a href="questionnaire.html" class="btn-outline">&#x21BB; Refaire le test</a>
       </div>
+    </div>
+  `;
 
-      <div class="viral-section">
-        <h3>&#128293; D&eacute;fie un ami</h3>
-        <p>Toi t'as trouv&eacute; ta voie. Et tes potes, ils en sont o&ugrave; ? Envoie-leur le test.</p>
-        <div class="viral-buttons">
-          <button class="btn-viral btn-viral-whatsapp" onclick="shareWhatsApp()">WhatsApp</button>
-          <button class="btn-viral btn-viral-twitter" onclick="shareTwitter()">Twitter / X</button>
-          <button class="btn-viral btn-viral-copy" onclick="copyLink()">&#128279; Copier le lien</button>
-        </div>
-      </div>
-    `;
-    page.innerHTML = html;
+  page.innerHTML = html;
+}
 
-    // Trigger Venn animation
-    setTimeout(() => {
-      const venn = document.getElementById('vennAnimated');
-      if (venn) {
-        venn.querySelectorAll('.vr-circle').forEach(c => c.classList.add('animate'));
-        const center = venn.querySelector('.vr-center');
-        if (center) center.classList.add('animate');
-      }
-    }, 500);
+// Choose an idea and go to formations
+function chooseIdea(index) {
+  const data = getResultsData();
+  if (!data || !data.results || !data.results.idees) return;
+  
+  const idee = data.results.idees[index];
+  const payload = {
+    idee: idee,
+    profil: data.results.profil_resume || '',
+    zone: data.results.zone_de_valeur || ''
+  };
+  
+  const encoded = encodeURIComponent(JSON.stringify(payload));
+  window.location.href = 'formations.html?data=' + encoded;
+}
 
-  } catch (renderErr) {
-    // PLAN C ULTIME : même si le render crash, on affiche quelque chose
-    console.error('Render crash, fallback display:', renderErr);
-    const page = document.getElementById('resultsPage');
-    document.getElementById('emptyState').style.display = 'none';
-    page.innerHTML = `
-      <div class="results-header">
-        <div class="confetti">&#128170;</div>
-        <h1>On a un petit <span class="highlight">souci technique</span></h1>
-        <p>Tes r&eacute;ponses ont bien &eacute;t&eacute; re&ccedil;ues mais quelque chose a bug&eacute; &agrave; l'affichage. Pas de panique !</p>
-      </div>
-      <div style="text-align:center;margin:2rem 0;">
-        <a href="questionnaire.html" class="btn-primary" style="display:inline-flex;">Refaire le test (tes r&eacute;ponses sont sauv&eacute;es) &#10148;</a>
-        <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-muted);">Si le probl&egrave;me persiste, contacte-nous : contact@trouvetavoie.fr</p>
-      </div>
-    `;
+// Share feature
+function shareResults() {
+  const text = "Je viens de trouver ma voie gr\\u00e2ce \\u00e0 l'IA ! \\ud83d\\ude80 D\\u00e9couvre la tienne sur Trouve ta Voie";
+  if (navigator.share) {
+    navigator.share({ title: 'Trouve ta Voie', text: text, url: window.location.origin });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(text + ' — ' + window.location.origin).then(() => {
+      const btn = document.querySelector('.results-cta .btn-primary');
+      const orig = btn.innerHTML;
+      btn.innerHTML = '&#10003; Copi&eacute; !';
+      setTimeout(() => btn.innerHTML = orig, 2000);
+    });
   }
 }
 
-// Viral sharing
-const siteUrl = window.location.origin || 'https://trouvetavoie.fr';
-const shareText = "Je viens de d\u00e9couvrir ma voie gr\u00e2ce \u00e0 l'IA \ud83d\ude80 Fais le test toi aussi, c'est gratuit !";
-
-function shareWhatsApp() {
-  window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + siteUrl), '_blank');
-}
-function shareTwitter() {
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent(siteUrl), '_blank');
-}
-function copyLink() {
-  navigator.clipboard.writeText(siteUrl).then(() => {
-    const btn = document.querySelector('.btn-viral-copy');
-    if (!btn) return;
-    const orig = btn.innerHTML;
-    btn.innerHTML = '&#10003; Lien copi&eacute; !';
-    btn.style.color = '#34d399';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2500);
-  }).catch(() => {});
-}
-
-// ========== INIT ==========
-try {
-  const data = getResultsData();
-  if (data && data.results) { renderResults(data); }
-  else { document.getElementById('emptyState').style.display = 'block'; }
-} catch (initErr) {
-  // Même le init ne peut pas crasher
-  console.error('Init error:', initErr);
+// Init
+const data = getResultsData();
+if (data && data.results) {
+  renderResults(data);
+} else {
   document.getElementById('emptyState').style.display = 'block';
 }
 </script>
