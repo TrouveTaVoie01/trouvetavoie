@@ -415,18 +415,23 @@ textarea.text-input { min-height: 80px; }
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
 
-<!-- API key is now server-side, no modal needed -->
-<div class="api-modal hidden" id="apiModal">
+<!-- API Key Modal -->
+<div class="api-modal" id="apiModal">
   <div class="api-modal-box">
-    <h2>&#128273; Configuration</h2>
-    <p>L'IA est pr&ecirc;te. Aucune configuration n&eacute;cessaire.</p>
+    <h2>&#128273; Connecte l'IA</h2>
+    <p>Pour g&eacute;n&eacute;rer tes r&eacute;sultats personnalis&eacute;s, entre ta cl&eacute; API Anthropic.<br>Elle reste sur ton navigateur, jamais envoy&eacute;e ailleurs.</p>
+    <div class="api-input-group">
+      <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-ant-api03-...">
+      <button class="api-save-btn" onclick="saveApiKey()">Valider</button>
+    </div>
+    <p class="api-note">&#128274; Ta cl&eacute; est stock&eacute;e uniquement dans ton navigateur. Elle n'est jamais partag&eacute;e.<br>Pas encore de cl&eacute; ? Cr&eacute;es-en une sur <a href="https://console.anthropic.com" target="_blank" style="color: var(--purple-light);">console.anthropic.com</a></p>
   </div>
 </div>
 
 <!-- Navbar -->
 <nav>
-  <a href="index.html" class="logo">Trouve<span>ta</span>Voie</a>
-  <a href="index.html" class="nav-back">&larr; Retour</a>
+  <a href="trouvetavoie-landing-v2.html" class="logo">Trouve<span>ta</span>Voie</a>
+  <a href="trouvetavoie-landing-v2.html" class="nav-back">&larr; Retour</a>
 </nav>
 
 <!-- Progress bar -->
@@ -503,11 +508,6 @@ textarea.text-input { min-height: 80px; }
     </div>
   </div>
 
-  <!-- Encouragement 1 -->
-  <div class="quiz-encouragement reveal" style="text-align: center; padding: 1rem 0; opacity: 0; animation: fadeUp 0.7s 0.35s forwards;">
-    <p style="font-size: 0.88rem; color: var(--purple-light); font-weight: 500;">&#10024; Super, on commence &agrave; te cerner. Maintenant, parlons de tes super-pouvoirs.</p>
-  </div>
-
   <!-- ===== BLOC 2: TALENTS ===== -->
   <div class="quiz-section section-talent">
     <div class="section-header">
@@ -546,11 +546,6 @@ textarea.text-input { min-height: 80px; }
       <label class="question-label"><span class="q-number">6.</span> Si on te demandait de l'aide, ce serait pour quoi ?</label>
       <textarea class="text-input" id="q6" placeholder="Les gens viennent souvent me voir pour..." rows="2"></textarea>
     </div>
-  </div>
-
-  <!-- Encouragement 2 -->
-  <div class="quiz-encouragement reveal" style="text-align: center; padding: 1rem 0; opacity: 0; animation: fadeUp 0.7s 0.5s forwards;">
-    <p style="font-size: 0.88rem; color: var(--cyan-accent); font-weight: 500;">&#128170; Derni&egrave;re ligne droite. Plus que quelques questions et l'IA fait le reste.</p>
   </div>
 
   <!-- ===== BLOC 3: MARCHÉ ===== -->
@@ -594,6 +589,7 @@ textarea.text-input { min-height: 80px; }
       <div class="chip-grid" id="q9chips">
         <div class="chip" data-value="Lycéen(ne)">Lyc&eacute;en(ne)</div>
         <div class="chip" data-value="Étudiant(e)">Etudiant(e)</div>
+        <div class="chip" data-value="Salarié(e)">Salari&eacute;(e)</div>
         <div class="chip" data-value="En recherche d'emploi">Recherche d'emploi</div>
         <div class="chip" data-value="En poste (reconversion)">En reconversion</div>
         <div class="chip" data-value="Freelance / entrepreneur">Freelance</div>
@@ -609,12 +605,11 @@ textarea.text-input { min-height: 80px; }
 
   <!-- Submit -->
   <div class="submit-area">
-    <p style="font-size: 1.05rem; color: var(--text-primary); font-weight: 500; margin-bottom: 1.25rem;">&#127919; Tes r&eacute;ponses sont pr&ecirc;tes. L'IA va croiser tout &ccedil;a et te proposer 3 voies concr&egrave;tes, rien que pour toi.</p>
     <button class="btn-primary" id="submitBtn" onclick="submitQuiz()">
       D&eacute;couvre ta voie
       <span class="arrow">&rarr;</span>
     </button>
-    <p class="submit-note">&#128274; Tes r&eacute;ponses ne sont ni stock&eacute;es, ni partag&eacute;es. L'IA analyse et oublie.</p>
+    <p class="submit-note">&#128274; Tes r&eacute;ponses restent priv&eacute;es. L'IA analyse et oublie.</p>
   </div>
 
 </main>
@@ -671,19 +666,35 @@ function updateProgress() {
 });
 updateProgress();
 
-// ========== API — SERVER-SIDE PROXY (no user API key needed) ==========
-let apiKey = 'server-side'; // Flag pour indiquer que l'API est gérée côté serveur
+// ========== API KEY ==========
+let apiKey = '';
 
 function checkApiKey() {
-  // Plus besoin de clé API — tout est géré côté serveur
-  // Le modal ne s'affiche plus
+  // Check if we have a key in memory
+  if (!apiKey) {
+    document.getElementById('apiModal').classList.remove('hidden');
+  }
 }
 
 function saveApiKey() {
-  // Plus nécessaire
-  document.getElementById('apiModal').classList.add('hidden');
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key && key.startsWith('sk-')) {
+    apiKey = key;
+    document.getElementById('apiModal').classList.add('hidden');
+  } else {
+    document.getElementById('apiKeyInput').style.borderColor = 'rgba(239, 68, 68, 0.5)';
+    setTimeout(() => {
+      document.getElementById('apiKeyInput').style.borderColor = '';
+    }, 2000);
+  }
 }
 
+// Enter key for API modal
+document.getElementById('apiKeyInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') saveApiKey();
+});
+
+// Show modal on load
 checkApiKey();
 
 // ========== COLLECT ANSWERS ==========
@@ -746,116 +757,16 @@ function animateLoading() {
   }, 2200);
 }
 
-// ========== SUBMIT & CALL AI via SERVER PROXY ==========
-async function callClaudeAPI(prompt, retries = 3) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
-
-      if (response.status === 429) {
-        if (attempt < retries) {
-          const waitTime = attempt * 5000;
-          updateLoadingMessage('Beaucoup de demandes... Nouvel essai dans ' + (waitTime/1000) + 's');
-          await new Promise(r => setTimeout(r, waitTime));
-          continue;
-        }
-        throw new Error("Trop de demandes. Réessaie dans 1 minute.");
-      }
-
-      if (response.status >= 500) {
-        if (attempt < retries) {
-          updateLoadingMessage("L'IA réfléchit un peu plus... Tentative " + (attempt+1) + "/" + retries);
-          await new Promise(r => setTimeout(r, 3000));
-          continue;
-        }
-        throw new Error("FALLBACK");
-      }
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || 'Erreur. Réessaie.');
-      }
-
-      return await response.json();
-
-    } catch (err) {
-      if (err.name === 'TypeError' || (err.message && err.message.includes('fetch'))) {
-        if (attempt < retries) {
-          updateLoadingMessage('Connexion... Nouvel essai ' + (attempt+1) + '/' + retries);
-          await new Promise(r => setTimeout(r, 3000));
-          continue;
-        }
-        throw new Error("FALLBACK");
-      }
-      throw err;
-    }
-  }
-}
-
-function updateLoadingMessage(msg) {
-  const p = document.querySelector('.loading-text p');
-  if (p) p.textContent = msg;
-}
-
-
-// ========== PLAN B : RÉSULTATS DE SECOURS ==========
-const fallbackDB = {
-  "Tech & innovation": [
-    { titre: "Crée une agence de sites web no-code pour les artisans locaux", description: "Utilise des outils comme Carrd, Notion ou Framer pour créer des sites vitrines pour les boulangers, coiffeurs et commerçants de ta ville. Ils en ont tous besoin, aucun ne sait le faire.", pourquoi_toi: "Tu es attiré par la tech et tu peux apprendre le no-code en quelques jours.", premier_pas: "Crée ton premier site gratuit pour un commerçant de ton quartier comme portfolio.", potentiel_revenus: "300-800€ par site, 2 000-5 000€/mois avec 5-8 clients", type: "business" },
-    { titre: "Deviens consultant en automatisation pour les PME", description: "Aide les petites entreprises à automatiser leurs tâches répétitives avec Make, Zapier ou Airtable. Tu leur fais gagner du temps, ils te paient pour ça.", pourquoi_toi: "Ton intérêt pour la tech combiné à ta capacité d'analyse te rend idéal pour ce rôle.", premier_pas: "Automatise un processus dans ta propre vie, puis propose-le gratuitement à une entreprise.", potentiel_revenus: "2 000-6 000€/mois en freelance", type: "business" }
-  ],
-  "Art & créativité": [
-    { titre: "Lance un studio de contenu visuel pour les marques sur Instagram", description: "Crée des visuels, reels et stories pour les marques qui veulent être belles sur les réseaux sociaux.", pourquoi_toi: "Ta créativité naturelle est exactement ce que les marques recherchent.", premier_pas: "Crée 5 visuels pour une marque fictive et poste-les comme portfolio sur Instagram.", potentiel_revenus: "1 500-4 000€/mois avec 3-5 clients récurrents", type: "business" },
-    { titre: "Deviens UX/UI designer freelance", description: "Apprends Figma en 3 mois et propose tes services aux startups qui cherchent quelqu'un pour rendre leurs apps belles et intuitives.", pourquoi_toi: "Tu as l'œil pour le beau et la capacité de comprendre les utilisateurs.", premier_pas: "Suis le cours gratuit Figma sur YouTube et crée 3 maquettes pour ton portfolio.", potentiel_revenus: "2 500-6 000€/mois en freelance", type: "metier" }
-  ],
-  "Business & entrepreneuriat": [
-    { titre: "Crée un média TikTok éducatif dans ta niche", description: "Choisis un sujet que tu connais bien et crée du contenu éducatif court sur TikTok. Monétise avec de l'affiliation, du sponsoring ou tes propres produits digitaux.", pourquoi_toi: "Ton esprit entrepreneurial et ta capacité à communiquer sont tes meilleurs atouts.", premier_pas: "Publie ta première vidéo TikTok de 60 secondes sur un sujet que tu maîtrises.", potentiel_revenus: "1 000-10 000€/mois selon l'audience", type: "business" },
-    { titre: "Lance une micro-agence de marketing pour les restos locaux", description: "Les restaurants ont besoin de visibilité en ligne mais n'y connaissent rien. Gère leur Google My Business, Instagram et avis.", pourquoi_toi: "Tu as le sens du business et tu sais comment attirer l'attention.", premier_pas: "Propose à un restaurant de ton quartier de gérer ses réseaux gratuitement pendant 1 mois.", potentiel_revenus: "2 000-5 000€/mois avec 4-6 clients à 500€/mois", type: "business" }
-  ],
-  "Sport & bien-être": [
-    { titre: "Deviens coach sportif en ligne avec des programmes personnalisés", description: "Crée des programmes de fitness accessibles via une app ou un PDF. Commence avec ton entourage, puis scale avec du contenu.", pourquoi_toi: "Ta passion pour le sport et ton énergie sont contagieuses.", premier_pas: "Crée un programme gratuit de 30 jours et propose-le à 10 personnes de ton entourage.", potentiel_revenus: "1 500-5 000€/mois avec du coaching + programmes", type: "business" }
-  ],
-  "default": [
-    { titre: "Crée une activité de freelance autour de ta compétence principale", description: "Identifie la compétence pour laquelle on te demande le plus souvent de l'aide. Propose-la comme service sur Malt, Fiverr ou en direct.", pourquoi_toi: "Tu as déjà un talent que les autres reconnaissent — il suffit de le monétiser.", premier_pas: "Crée ton profil sur Malt.fr avec une offre claire et un tarif compétitif.", potentiel_revenus: "1 000-4 000€/mois selon la compétence", type: "business" },
-    { titre: "Lance un podcast ou une chaîne YouTube dans ton domaine de passion", description: "Partage tes connaissances et ton parcours. Le contenu long crée de la confiance et ouvre des portes.", pourquoi_toi: "Ta curiosité et ta capacité à apprendre vite te permettent de créer du contenu de valeur.", premier_pas: "Enregistre ton premier épisode avec ton téléphone. Pas besoin de matériel pro.", potentiel_revenus: "500-5 000€/mois après 6-12 mois de régularité", type: "projet" },
-    { titre: "Deviens assistant virtuel spécialisé pour les entrepreneurs", description: "Gère les emails, réseaux sociaux, planning et tâches admin pour des entrepreneurs débordés.", pourquoi_toi: "Ton organisation et ta polyvalence sont exactement ce dont les entrepreneurs ont besoin.", premier_pas: "Inscris-toi sur Befreelancr ou Malt et propose tes services d'assistant virtuel.", potentiel_revenus: "1 500-3 500€/mois avec 2-4 clients réguliers", type: "metier" }
-  ]
-};
-
-function generateFallbackResults(answers) {
-  const interests = answers.passions.sujets_interet || [];
-  const skills = answers.talents.competences_naturelles || [];
-  let idees = [];
-  for (const interest of interests) {
-    if (fallbackDB[interest]) idees.push(...fallbackDB[interest]);
-  }
-  if (idees.length < 3) {
-    for (const d of fallbackDB['default']) {
-      if (idees.length >= 3) break;
-      if (!idees.find(i => i.titre === d.titre)) idees.push(d);
-    }
-  }
-  idees = idees.slice(0, 3);
-  return {
-    profil_resume: `Tu es quelqu'un de curieux avec un vrai potentiel. Tes centres d'intérêt (${interests.slice(0,2).join(', ') || 'variés'}) et tes compétences (${skills.slice(0,2).join(', ') || 'multiples'}) te donnent des opportunités concrètes.`,
-    zone_de_valeur: `L'intersection entre ${interests[0] || 'tes passions'}, ${skills[0] || 'tes talents'} et les besoins du marché ouvre des voies prometteuses pour toi.`,
-    passions_cles: interests.slice(0,3).length > 0 ? interests.slice(0,3) : ["Curiosité", "Apprentissage", "Création"],
-    talents_cles: skills.slice(0,3).length > 0 ? skills.slice(0,3) : ["Polyvalence", "Adaptabilité", "Motivation"],
-    marche_cles: (answers.marche.type_travail||[]).slice(0,3).length > 0 ? answers.marche.type_travail.slice(0,3) : ["Freelance", "Digital", "Services"],
-    idees: idees,
-    is_fallback: true
-  };
-}
-
+// ========== SUBMIT & CALL AI ==========
 async function submitQuiz() {
-  if (!apiKey) { document.getElementById('apiModal').classList.remove('hidden'); return; }
+  if (!apiKey) {
+    document.getElementById('apiModal').classList.remove('hidden');
+    return;
+  }
 
   const answers = collectAnswers();
   const errorMsg = validateAnswers(answers);
+
   if (errorMsg) {
     const banner = document.getElementById('errorBanner');
     banner.textContent = errorMsg;
@@ -865,6 +776,7 @@ async function submitQuiz() {
     return;
   }
 
+  // Show loading
   document.getElementById('loadingOverlay').classList.add('show');
   document.getElementById('submitBtn').disabled = true;
   animateLoading();
@@ -898,77 +810,95 @@ RÉPONDS UNIQUEMENT en JSON valide (sans backticks, sans texte avant/après) ave
   "marche_cles": ["opportunité 1", "opportunité 2", "opportunité 3"],
   "idees": [
     {
-      "titre": "Titre court et accrocheur",
-      "description": "Description détaillée en 2-3 phrases, hyper concrète",
-      "pourquoi_toi": "Pourquoi cette idée correspond à CE profil (1-2 phrases)",
-      "premier_pas": "La première action concrète à faire maintenant",
-      "potentiel_revenus": "Estimation réaliste de revenus",
+      "titre": "Titre court et accrocheur de l'idée",
+      "description": "Description détaillée en 2-3 phrases de l'idée, hyper concrète et actionnable",
+      "pourquoi_toi": "Pourquoi cette idée correspond à CE profil précisément (1-2 phrases)",
+      "premier_pas": "La première action concrète à faire dès maintenant",
+      "potentiel_revenus": "Estimation réaliste de revenus possibles",
       "type": "metier | projet | business"
     },
-    { "titre":"...","description":"...","pourquoi_toi":"...","premier_pas":"...","potentiel_revenus":"...","type":"..." },
-    { "titre":"...","description":"...","pourquoi_toi":"...","premier_pas":"...","potentiel_revenus":"...","type":"..." }
+    {
+      "titre": "...",
+      "description": "...",
+      "pourquoi_toi": "...",
+      "premier_pas": "...",
+      "potentiel_revenus": "...",
+      "type": "..."
+    },
+    {
+      "titre": "...",
+      "description": "...",
+      "pourquoi_toi": "...",
+      "premier_pas": "...",
+      "potentiel_revenus": "...",
+      "type": "..."
+    }
   ]
 }
 
 RÈGLES :
-- Idées HYPER CONCRÈTES. Pas "marketing" mais "Lance une agence de contenu TikTok pour les restaurants locaux"
-- Réaliste et atteignable depuis la situation actuelle
-- Potentiel de revenus correspondant au salaire cible
-- Ton bienveillant mais direct
-- Chaque idée utilise AU MOINS une passion + un talent + une opportunité de marché`;
+- Les idées doivent être HYPER CONCRÈTES. Pas "marketing" mais "Lance une agence de contenu TikTok pour les restaurants locaux"
+- Chaque idée doit être réaliste et atteignable depuis la situation actuelle de la personne
+- Le potentiel de revenus doit correspondre au salaire cible
+- Adapte le ton : bienveillant mais direct, comme un grand frère qui a de l'expérience
+- Pense intersection : chaque idée doit utiliser AU MOINS une passion + un talent + une opportunité de marché`;
 
   try {
-    const data = await callClaudeAPI(prompt);
-    const text = data.content[0].text;
-    const clean = text.replace(/\x60\x60\x60json|\x60\x60\x60/g, '').trim();
-    let results;
-    try {
-      results = JSON.parse(clean);
-    } catch (parseErr) {
-      const jsonMatch = clean.match(/\{[\s\S]*\}/);
-      if (jsonMatch) { results = JSON.parse(jsonMatch[0]); }
-      else { throw new Error("FALLBACK"); }
-    }
-    if (!results.idees || results.idees.length < 3) throw new Error("FALLBACK");
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
 
-    const storeData = { answers, results, timestamp: new Date().toISOString() };
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `Erreur API (${response.status})`);
+    }
+
+    const data = await response.json();
+    const text = data.content[0].text;
+
+    // Parse JSON
+    const clean = text.replace(/```json|```/g, '').trim();
+    const results = JSON.parse(clean);
+
+    // Store results and answers, then redirect
+    const storeData = {
+      answers: answers,
+      results: results,
+      timestamp: new Date().toISOString()
+    };
+
+    // Use URL params to pass data to results page
     const encoded = encodeURIComponent(JSON.stringify(storeData));
-    window.location.href = 'resultats.html?data=' + encoded;
+    window.location.href = `trouvetavoie-resultats.html?data=${encoded}`;
 
   } catch (err) {
-    console.error('Erreur:', err);
-
-    // PLAN B — si c'est une erreur technique, on utilise le fallback
-    const needsFallback = (
-      err.message === "FALLBACK" ||
-      err.message.includes("indisponible") ||
-      err.message.includes("connexion") ||
-      err.message.includes("Trop de demandes") ||
-      err.message.includes("FORMAT")
-    );
-
-    if (needsFallback) {
-      console.log('Plan B activé — résultats de secours');
-      updateLoadingMessage("On prépare tes résultats...");
-      await new Promise(r => setTimeout(r, 1500));
-      const fallback = generateFallbackResults(answers);
-      const storeData = { answers, results: fallback, timestamp: new Date().toISOString() };
-      const encoded = encodeURIComponent(JSON.stringify(storeData));
-      window.location.href = 'resultats.html?data=' + encoded;
-      return;
-    }
-
-    // Erreur qui nécessite une action utilisateur (clé API invalide)
+    console.error('API Error:', err);
     document.getElementById('loadingOverlay').classList.remove('show');
     document.getElementById('submitBtn').disabled = false;
+
     const banner = document.getElementById('errorBanner');
-    banner.innerHTML = '<div style="margin-bottom:0.5rem;font-size:1.1rem;">&#128533;</div><strong>' + (err.message || "Une erreur est survenue.") + '</strong><div style="margin-top:0.5rem;font-size:0.82rem;opacity:0.8;">Clique sur "Découvre ta voie" pour réessayer.</div>';
+    banner.textContent = '😕 ' + (err.message || "Une erreur est survenue. Vérifie ta clé API et réessaie.");
     banner.classList.add('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    document.querySelectorAll('.loading-step').forEach(s => s.classList.remove('active','done'));
-    updateLoadingMessage("On croise tes passions, talents et le marché");
+
+    // Reset loading steps
+    document.querySelectorAll('.loading-step').forEach(s => {
+      s.classList.remove('active', 'done');
+    });
   }
 }
 </script>
+
 </body>
 </html>
