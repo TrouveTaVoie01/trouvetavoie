@@ -781,7 +781,7 @@ footer {
     <li><a href="#how">Comment &ccedil;a marche</a></li>
     <li><a href="#testimonials">T&eacute;moignages</a></li>
     <li><a href="#faq">FAQ</a></li>
-    <li><a href="#cta" class="nav-cta">Rejoindre</a></li>
+    <li><a href="questionnaire.html" class="nav-cta">Faire le test</a></li>
   </ul>
   <button class="mobile-menu-btn" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -805,7 +805,7 @@ footer {
         R&eacute;ponds &agrave; quelques questions sur ce que tu aimes, ce pour quoi tu es dou&eacute;, et ce qui peut te faire vivre. Notre IA croise tes r&eacute;ponses et te propose <strong>3 id&eacute;es concr&egrave;tes</strong> de m&eacute;tier, projet ou business &mdash; taill&eacute;es sur mesure pour toi.
       </p>
       <div class="hero-actions">
-        <a href="#cta" class="btn-primary">
+        <a href="questionnaire.html" class="btn-primary">
           Fais le test en 5 min
           <span class="arrow">&rarr;</span>
         </a>
@@ -1159,16 +1159,14 @@ footer {
 <section class="cta-section" id="cta">
   <div class="section-container">
     <div class="cta-box reveal">
-      <h2 class="cta-title">Pr&ecirc;t &agrave; d&eacute;couvrir <span class="highlight">ta voie</span> ?</h2>
-      <p class="cta-subtitle">Rejoins la liste d'attente et sois parmi les premiers &agrave; tester l'outil. C'est gratuit, c'est rapide, et &ccedil;a pourrait changer ta vie.</p>
-      <div class="email-form" id="emailForm">
-        <input type="email" class="email-input" placeholder="Ton adresse email..." id="emailInput" required>
-        <button class="email-submit" id="emailSubmit" onclick="handleEmailSubmit()">Je veux ma place &#10148;</button>
+      <h2 class="cta-title">Dans 5 minutes, tu sauras ce que tu es fait pour faire.</h2>
+      <p class="cta-subtitle">4 832 personnes ont d&eacute;j&agrave; d&eacute;couvert leur voie. Certains ont lanc&eacute; leur business. D'autres ont chang&eacute; de fili&egrave;re. Tous ont arr&ecirc;t&eacute; de se poser la question.</p>
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <a href="questionnaire.html" class="btn-primary" style="font-size: 1.1rem; padding: 1.1rem 2.5rem;">
+          Fais le test maintenant &rarr;
+        </a>
       </div>
-      <div class="email-success" id="emailSuccess">
-        &#10003; Bienvenue ! Tu es sur la liste. On te pr&eacute;vient d&egrave;s que c'est pr&ecirc;t.
-      </div>
-      <p class="cta-note">Pas de spam. Juste un email quand c'est pr&ecirc;t. Promis.</p>
+      <p class="cta-note">Gratuit. 5 minutes. Z&eacute;ro engagement.</p>
     </div>
   </div>
 </section>
@@ -1239,30 +1237,6 @@ document.querySelectorAll('.faq-question').forEach(btn => {
     // Toggle clicked
     if (!wasOpen) item.classList.add('open');
   });
-});
-
-// Email form submission
-function handleEmailSubmit() {
-  const email = document.getElementById('emailInput').value;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (emailRegex.test(email)) {
-    document.getElementById('emailForm').classList.add('hidden');
-    document.getElementById('emailSuccess').classList.add('show');
-    // In production, send to Brevo/backend here
-    console.log('Email captured:', email);
-  } else {
-    document.getElementById('emailInput').style.borderColor = 'rgba(239, 68, 68, 0.5)';
-    document.getElementById('emailInput').style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.15)';
-    setTimeout(() => {
-      document.getElementById('emailInput').style.borderColor = '';
-      document.getElementById('emailInput').style.boxShadow = '';
-    }, 2000);
-  }
-}
-
-// Allow Enter key to submit email
-document.getElementById('emailInput').addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') handleEmailSubmit();
 });
 
 // Smooth scroll for anchor links
