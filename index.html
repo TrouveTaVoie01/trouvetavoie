@@ -7,32 +7,27 @@
 <meta name="description" content="Tu ne sais pas quoi faire de ta vie ? Notre IA analyse tes passions, talents et le marché pour te proposer 3 idées concrètes de métier, projet ou business. Gratuit. 5 minutes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Satoshi:wght@300;400;500;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ========== VARIABLES ========== */
 :root {
-  --bg-deep: #050510;
-  --bg-card: #0a0a1e;
-  --bg-card-hover: #0f0f2a;
+  --bg-deep: #06060f;
+  --bg-card: #0c0c1d;
+  --bg-card-hover: #111128;
   --purple-primary: #7c3aed;
   --purple-light: #a78bfa;
   --purple-glow: #8b5cf6;
   --blue-accent: #3b82f6;
   --cyan-accent: #06b6d4;
-  --gold-accent: #f59e0b;
   --text-primary: #f1f0ff;
   --text-secondary: #a5a3c7;
   --text-muted: #6b6991;
   --gradient-hero: linear-gradient(135deg, #7c3aed 0%, #3b82f6 50%, #06b6d4 100%);
-  --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
   --venn-love: #f472b6;
   --venn-talent: #a78bfa;
   --venn-money: #60a5fa;
-  --border-subtle: rgba(124, 58, 237, 0.06);
-  --border-light: rgba(124, 58, 237, 0.12);
-  --font-display: 'Sora', sans-serif;
-  --font-body: 'Outfit', sans-serif;
+  --border-subtle: rgba(124, 58, 237, 0.08);
+  --border-light: rgba(124, 58, 237, 0.15);
 }
 
 /* ========== RESET & BASE ========== */
@@ -51,26 +46,9 @@ img { max-width: 100%; display: block; }
 
 /* Grain texture */
 .grain {
-  position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.018;
+  position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.022;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat; background-size: 128px;
-}
-
-/* Cursor glow — premium effect */
-.cursor-glow {
-  position: fixed; width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%);
-  pointer-events: none; z-index: 1; transform: translate(-50%, -50%);
-  transition: opacity 0.3s;
-}
-
-/* Animated mesh background */
-.mesh-bg {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: 
-    radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.03) 0%, transparent 50%);
 }
 
 /* ========== SCROLL ANIMATIONS ========== */
@@ -134,10 +112,40 @@ nav.scrolled {
 .nav-cta::after { display: none !important; }
 
 /* Mobile menu */
-.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 200; }
 .mobile-menu-btn span {
   display: block; width: 24px; height: 2px; background: var(--text-secondary);
   margin: 5px 0; transition: all 0.3s; border-radius: 2px;
+}
+/* Burger animation when open */
+.mobile-menu-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
+.mobile-menu-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobile nav overlay */
+.nav-links.mobile-open {
+  display: flex !important;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(6, 6, 15, 0.97);
+  backdrop-filter: blur(20px);
+  z-index: 150;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.nav-links.mobile-open a {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.nav-links.mobile-open .nav-cta {
+  margin-top: 0.5rem;
+  font-size: 1.1rem !important;
+  padding: 0.8rem 2rem !important;
 }
 
 /* ========== SHARED ELEMENTS ========== */
@@ -765,17 +773,15 @@ footer {
 <body>
 
 <div class="grain"></div>
-<div class="mesh-bg"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
 
 <!-- ========== NAVBAR ========== -->
 <nav id="navbar">
   <div class="logo">Trouve<span>ta</span>Voie</div>
   <ul class="nav-links">
     <li><a href="#how">Comment &ccedil;a marche</a></li>
-    <li><a href="formations.html">Formations</a></li>
-    <li><a href="a-propos.html">&Agrave; propos</a></li>
-    <li><a href="questionnaire.html" class="nav-cta">Faire le test</a></li>
+    <li><a href="#testimonials">T&eacute;moignages</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#cta" class="nav-cta">Rejoindre</a></li>
   </ul>
   <button class="mobile-menu-btn" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -788,26 +794,26 @@ footer {
     <div class="hero-copy">
       <div class="hero-badge">
         <span class="dot"></span>
-        100% gratuit &middot; Propuls&eacute; par l'IA &middot; 5 minutes
+        Gratuit &middot; Guid&eacute; par l'IA &middot; 5 minutes
       </div>
       <h1 class="hero-title">
-        Arr&ecirc;te de chercher.
-        <span class="highlight">Trouve.</span>
-        <span class="line-2">L'IA qui te r&eacute;v&egrave;le les 3 voies faites pour toi.</span>
+        Tu ne sais pas quoi faire de ta vie ?
+        <span class="highlight">C'est normal.</span>
+        <span class="line-2">On t'aide &agrave; trouver ta voie &mdash; celle qui te ressemble vraiment.</span>
       </h1>
       <p class="hero-description">
-        Tu r&eacute;ponds. L'IA croise tes passions, tes talents et le march&eacute;. En 5 minutes, tu re&ccedil;ois <strong>3 id&eacute;es concr&egrave;tes</strong> de m&eacute;tier, projet ou business &mdash; pas des labels vagues, des pistes que tu peux lancer d&egrave;s demain.
+        R&eacute;ponds &agrave; quelques questions sur ce que tu aimes, ce pour quoi tu es dou&eacute;, et ce qui peut te faire vivre. Notre IA croise tes r&eacute;ponses et te propose <strong>3 id&eacute;es concr&egrave;tes</strong> de m&eacute;tier, projet ou business &mdash; taill&eacute;es sur mesure pour toi.
       </p>
       <div class="hero-actions">
-        <a href="questionnaire.html" class="btn-primary">
-          D&eacute;couvrir ma voie
+        <a href="#cta" class="btn-primary">
+          Fais le test en 5 min
           <span class="arrow">&rarr;</span>
         </a>
-        <a href="#how" class="btn-secondary">Voir comment &ccedil;a marche</a>
+        <a href="#how" class="btn-secondary">Comment &ccedil;a marche ?</a>
       </div>
       <div class="hero-proof">
         <div class="proof-item">
-          <span class="proof-number" id="counterVoies" data-target="4832">0</span>
+          <span class="proof-number">2 847</span>
           <span class="proof-label">Voies trouv&eacute;es</span>
         </div>
         <div class="proof-divider"></div>
@@ -818,7 +824,7 @@ footer {
         <div class="proof-divider"></div>
         <div class="proof-item">
           <span class="proof-number">100%</span>
-          <span class="proof-label">Gratuit &mdash; pour toujours</span>
+          <span class="proof-label">Gratuit</span>
         </div>
       </div>
     </div>
@@ -872,34 +878,34 @@ footer {
   <div class="section-container">
     <div class="reveal">
       <span class="section-badge">Le probl&egrave;me</span>
-      <h2 class="section-title">Tu scrolles &agrave; 23h en te demandant<br><span class="highlight">&laquo; je vais faire quoi de ma vie ? &raquo;</span></h2>
-      <p class="section-subtitle">T'es pas le seul. Des millions de jeunes vivent &ccedil;a. Et le syst&egrave;me actuel ne les aide pas.</p>
+      <h2 class="section-title">On a tous entendu<br><span class="highlight">&laquo; Qu'est-ce que tu veux faire plus tard ? &raquo;</span></h2>
+      <p class="section-subtitle">Et personne ne nous a vraiment aid&eacute; &agrave; r&eacute;pondre. Ni l'&eacute;cole, ni les tests d'orientation, ni les conseillers d&eacute;bord&eacute;s.</p>
     </div>
 
     <div class="problem-grid">
       <div class="problem-cards">
         <div class="problem-card reveal reveal-delay-1">
           <div class="card-emoji">&#128566;</div>
-          <p class="card-text"><strong>1 &eacute;tudiant sur 2 se r&eacute;oriente</strong> apr&egrave;s la premi&egrave;re ann&eacute;e. Un an perdu. De la confiance en moins. Et toujours aucune r&eacute;ponse.</p>
+          <p class="card-text"><strong>50% des &eacute;tudiants se r&eacute;orientent</strong> apr&egrave;s leur premi&egrave;re ann&eacute;e. Des mois perdus, de la confiance &eacute;rod&eacute;e.</p>
         </div>
         <div class="problem-card reveal reveal-delay-2">
           <div class="card-emoji">&#128169;</div>
-          <p class="card-text">&laquo; Tu es fait pour le commerce. &raquo; Merci le test d'orientation de 45 minutes. <strong>Trop long, trop flou, zéro valeur.</strong></p>
+          <p class="card-text">Les tests d'orientation classiques ? <strong>Trop longs, trop vagues</strong>, et le r&eacute;sultat c'est &laquo; tu es fait pour le commerce &raquo;. Merci, tr&egrave;s utile.</p>
         </div>
         <div class="problem-card reveal reveal-delay-3">
           <div class="card-emoji">&#128554;</div>
-          <p class="card-text">Ton conseiller d'orientation ? Il g&egrave;re <strong>300 &eacute;l&egrave;ves</strong>. Il a 15 minutes pour toi. C'est pas de sa faute &mdash; mais c'est pas suffisant.</p>
+          <p class="card-text">Les conseillers d'orientation voient <strong>300 &eacute;l&egrave;ves par an</strong>. Impossible d'avoir un accompagnement personnalis&eacute;.</p>
         </div>
         <div class="problem-card reveal reveal-delay-4">
           <div class="card-emoji">&#128176;</div>
-          <p class="card-text">Un bilan de comp&eacute;tences : <strong>1 500 &agrave; 3 000&euro;</strong>. T'as 17 ans et z&eacute;ro budget. On est d'accord &mdash; c'est pas une option.</p>
+          <p class="card-text">Un bilan de comp&eacute;tences co&ucirc;te <strong>1 500 &agrave; 3 000&euro;</strong>. Inaccessible quand on a 17 ans et z&eacute;ro budget.</p>
         </div>
       </div>
 
       <div class="problem-right reveal reveal-delay-2">
         <div class="big-quote">&laquo;</div>
-        <p class="quote-text">J'ai pass&eacute; 3 ans &agrave; &eacute;tudier un truc qui ne me correspondait pas. Personne ne m'avait demand&eacute; : c'est quoi TON truc ? J'ai cr&eacute;&eacute; l'outil que j'aurais voulu avoir &agrave; 17 ans.</p>
-        <p class="quote-author">&mdash; Lenny, 22 ans, fondateur</p>
+        <p class="quote-text">J'ai pass&eacute; 3 ans &agrave; &eacute;tudier un truc qui ne me correspondait pas. J'aurais donn&eacute; n'importe quoi pour avoir un outil comme &ccedil;a plus t&ocirc;t.</p>
+        <p class="quote-author">&mdash; Lenny, 22 ans, fondateur de Trouve ta Voie</p>
       </div>
     </div>
   </div>
@@ -1153,26 +1159,16 @@ footer {
 <section class="cta-section" id="cta">
   <div class="section-container">
     <div class="cta-box reveal">
-      <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">&#128640;</div>
-      <h2 class="cta-title">Dans 5 minutes, tu sauras<br><span class="highlight">ce que tu es fait pour faire.</span></h2>
-      <p class="cta-subtitle">4 832 personnes ont d&eacute;j&agrave; d&eacute;couvert leur voie. Certains ont lanc&eacute; leur business. D'autres ont chang&eacute; de fili&egrave;re. Tous ont arr&ecirc;t&eacute; de se poser la question.</p>
-      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem;">
-        <a href="questionnaire.html" class="btn-primary" style="font-size: 1.1rem; padding: 1.1rem 2.5rem;">
-          Fais le test maintenant
-          <span class="arrow">&rarr;</span>
-        </a>
+      <h2 class="cta-title">Pr&ecirc;t &agrave; d&eacute;couvrir <span class="highlight">ta voie</span> ?</h2>
+      <p class="cta-subtitle">Rejoins la liste d'attente et sois parmi les premiers &agrave; tester l'outil. C'est gratuit, c'est rapide, et &ccedil;a pourrait changer ta vie.</p>
+      <div class="email-form" id="emailForm">
+        <input type="email" class="email-input" placeholder="Ton adresse email..." id="emailInput" required>
+        <button class="email-submit" id="emailSubmit" onclick="handleEmailSubmit()">Je veux ma place &#10148;</button>
       </div>
-      <p class="cta-note">Gratuit. 5 minutes. Z&eacute;ro engagement.</p>
-      <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(124,58,237,0.1);">
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">Tu pr&eacute;f&egrave;res recevoir un rappel par email ?</p>
-        <div class="email-form" id="emailForm">
-          <input type="email" class="email-input" placeholder="Ton adresse email..." id="emailInput" required>
-          <button class="email-submit" id="emailSubmit" onclick="handleEmailSubmit()">Rappelle-moi &#10148;</button>
-        </div>
-        <div class="email-success" id="emailSuccess">
-          &#10003; C'est not&eacute; ! On te rappelle bient&ocirc;t.
-        </div>
+      <div class="email-success" id="emailSuccess">
+        &#10003; Bienvenue ! Tu es sur la liste. On te pr&eacute;vient d&egrave;s que c'est pr&ecirc;t.
       </div>
+      <p class="cta-note">Pas de spam. Juste un email quand c'est pr&ecirc;t. Promis.</p>
     </div>
   </div>
 </section>
@@ -1184,10 +1180,10 @@ footer {
     <div class="footer-inner">
       <div class="footer-logo">Trouve<span>ta</span>Voie</div>
       <ul class="footer-links">
-        <li><a href="questionnaire.html">Faire le test</a></li>
-        <li><a href="formations.html">Formations</a></li>
-        <li><a href="a-propos.html">&Agrave; propos</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#f4979b9a80959780b480869b8182918095829b9d91da9286">Contact</a></li>
+        <li><a href="#how">Comment &ccedil;a marche</a></li>
+        <li><a href="#testimonials">T&eacute;moignages</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="mailto:contact@trouvetavoie.fr">Contact</a></li>
       </ul>
     </div>
     <p class="footer-copy">&copy; 2026 Trouve ta Voie. Fait avec &#10084;&#65039; pour ceux qui cherchent leur chemin.</p>
@@ -1196,45 +1192,31 @@ footer {
 
 
 <!-- ========== SCRIPTS ========== -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">// Counter animation
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target);
-  const duration = 2000;
-  const start = performance.now();
-  function update(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.floor(eased * target);
-    el.textContent = current.toLocaleString('fr-FR');
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-const counterEl = document.getElementById('counterVoies');
-if (counterEl) {
-  const cObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); cObs.unobserve(e.target); } });
-  }, { threshold: 0.5 });
-  cObs.observe(counterEl);
-}
-</script><script>
-// Cursor glow effect
-const glow = document.getElementById('cursorGlow');
-if (glow && window.innerWidth > 768) {
-  document.addEventListener('mousemove', (e) => {
-    requestAnimationFrame(() => {
-      glow.style.left = e.clientX + 'px';
-      glow.style.top = e.clientY + 'px';
-    });
-  });
-}
-
+<script>
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 50);
 });
+
+// Mobile menu toggle
+const mobileBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+if (mobileBtn && navLinks) {
+  mobileBtn.addEventListener('click', () => {
+    mobileBtn.classList.toggle('open');
+    navLinks.classList.toggle('mobile-open');
+    document.body.style.overflow = navLinks.classList.contains('mobile-open') ? 'hidden' : '';
+  });
+  // Close menu when clicking a link
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileBtn.classList.remove('open');
+      navLinks.classList.remove('mobile-open');
+      document.body.style.overflow = '';
+    });
+  });
+}
 
 // Scroll reveal animation
 const revealElements = document.querySelectorAll('.reveal');
@@ -1288,7 +1270,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     e.preventDefault();
     const target = document.querySelector(this.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 });
 </script>
